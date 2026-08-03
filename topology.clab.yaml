@@ -2,7 +2,7 @@ name: hosts-clab
 prefix: ""
 
 mgmt:
-  network: mgt
+  network: mgt-clab
   ipv4-subnet: 172.20.19.0/24
 
 topology:
