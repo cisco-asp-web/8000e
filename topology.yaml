@@ -1,8 +1,8 @@
 
 devices:
   dc0p0sa0:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc0p0sa0.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -20,8 +20,8 @@ devices:
        no shut
 
   dc0p0sa1:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc0p0sa1.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -39,8 +39,8 @@ devices:
        no shut
 
   dc0p1sa0:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc0p1sa0.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -58,8 +58,8 @@ devices:
        no shut
 
   dc0p1sa1:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc0p1sa1.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -77,8 +77,8 @@ devices:
        no shut
 
   dc1p0sa0:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc1p0sa0.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -96,8 +96,8 @@ devices:
        no shut
        
   dc1p0sa1:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc1p0sa1.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -115,8 +115,8 @@ devices:
        no shut
 
   dc1p1sa0:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc1p1sa0.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
@@ -134,8 +134,8 @@ devices:
        no shut
 
   dc1p1sa1:
-    #image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-    image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
+    image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
+    #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
     cvac: config/dc1p1sa1.cfg
     platform: spitfire_f
     linecard_types: ['8223-64EF-M']
