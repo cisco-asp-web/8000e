@@ -16,7 +16,7 @@ devices:
       snmp-server community public RO
       ssh
       interface MgmtEth0/RP0/CPU0/0
-       ipv4 address 198.18.128.200/24
+       ipv4 address 192.168.122.200/24
        no shut
 
   dc0p0sa1:
