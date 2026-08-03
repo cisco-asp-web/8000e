@@ -52,37 +52,37 @@ topology:
         - "ip -6 route add fc00:0001::/32 via 2001:db8:bbbb:03::1 dev eth2"
         - "ip -6 route add 2001:db8:bbbb::/48 via 2001:db8:bbbb:03::1 dev eth1"
 
+    dc0-host00-l0:
+      kind: bridge
+
+    dc0-host00-l1:
+      kind: bridge
+
+    dc0-host01-l0:
+      kind: bridge
+
+    dc0-host01-l1:
+      kind: bridge
+
+    dc1-host00-l0:
+      kind: bridge
+
+    dc1-host00-l1:
+      kind: bridge
+
+    dc1-host01-l0:
+      kind: bridge
+
+    dc1-host01-l1:
+      kind: bridge
+
   links:
 
-    - endpoints: ["p0-leaf00:eth9", "green-host00:eth1"]
-    - endpoints: ["p0-leaf00:eth10", "yellow-host00:eth1"]
-    - endpoints: ["p0-leaf01:eth9", "green-host01:eth1"]
-    - endpoints: ["p0-leaf01:eth10", "yellow-host01:eth1"]
-    - endpoints: ["p0-leaf02:eth9", "green-host02:eth1"]
-    - endpoints: ["p0-leaf02:eth10", "yellow-host02:eth1"]
-    - endpoints: ["p0-leaf03:eth9", "green-host03:eth1"]
-    - endpoints: ["p0-leaf03:eth10", "yellow-host03:eth1"]
-    - endpoints: ["p0-leaf04:eth9", "green-host04:eth1"]
-    - endpoints: ["p0-leaf04:eth10", "yellow-host04:eth1"]
-    - endpoints: ["p0-leaf05:eth9", "green-host05:eth1"]
-    - endpoints: ["p0-leaf05:eth10", "yellow-host05:eth1"]
-    - endpoints: ["p0-leaf06:eth9", "green-host06:eth1"]
-    - endpoints: ["p0-leaf06:eth10", "yellow-host06:eth1"]
-    - endpoints: ["p0-leaf07:eth9", "green-host07:eth1"]
-    - endpoints: ["p0-leaf07:eth10", "yellow-host07:eth1"]
-    - endpoints: ["p1-leaf00:eth9", "green-host00:eth2"]
-    - endpoints: ["p1-leaf00:eth10", "yellow-host00:eth2"]
-    - endpoints: ["p1-leaf01:eth9", "green-host01:eth2"]
-    - endpoints: ["p1-leaf01:eth10", "yellow-host01:eth2"]
-    - endpoints: ["p1-leaf02:eth9", "green-host02:eth2"]
-    - endpoints: ["p1-leaf02:eth10", "yellow-host02:eth2"]
-    - endpoints: ["p1-leaf03:eth9", "green-host03:eth2"]
-    - endpoints: ["p1-leaf03:eth10", "yellow-host03:eth2"]
-    - endpoints: ["p1-leaf04:eth9", "green-host04:eth2"]
-    - endpoints: ["p1-leaf04:eth10", "yellow-host04:eth2"]
-    - endpoints: ["p1-leaf05:eth9", "green-host05:eth2"]
-    - endpoints: ["p1-leaf05:eth10", "yellow-host05:eth2"]
-    - endpoints: ["p1-leaf06:eth9", "green-host06:eth2"]
-    - endpoints: ["p1-leaf06:eth10", "yellow-host06:eth2"]
-    - endpoints: ["p1-leaf07:eth9", "green-host07:eth2"]
-    - endpoints: ["p1-leaf07:eth10", "yellow-host07:eth2"]
+    - endpoints: ["dc0-host00:eth1","dc0-host00-l0:dc0-host00-eth1"]
+    - endpoints: ["dc0-host00:eth2","dc0-host00-l1:dc0-host00-eth2"]
+    - endpoints: ["dc0-host01:eth1","dc0-host01-l0:dc0-host01-eth1"]
+    - endpoints: ["dc0-host01:eth2","dc0-host01-l1:dc0-host01-eth2"]
+    - endpoints: ["dc1-host00:eth1","dc1-host00-l0:dc1-host00-eth1"]
+    - endpoints: ["dc1-host00:eth2","dc1-host00-l1:dc1-host00-eth2"]
+    - endpoints: ["dc1-host01:eth1","dc1-host01-l0:dc1-host01-eth1"]
+    - endpoints: ["dc1-host01:eth2","dc1-host01-l1:dc1-host01-eth2"]
