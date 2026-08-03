@@ -1,0 +1,88 @@
+name: hosts-clab
+prefix: ""
+
+mgmt:
+  network: mgt
+  ipv4-subnet: 172.20.19.0/24
+
+topology:
+  nodes:
+
+    dc0-host00:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.200
+      exec:
+        - "ip -6 addr add 2001:db8:bbbb:00::2/64 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:bbbb:00::2/64 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 via 2001:db8:bbbb:00::1 dev eth1"
+        - "ip -6 route add fc00:0001::/32 via 2001:db8:bbbb:00::1 dev eth2"
+        - "ip -6 route add 2001:db8:bbbb::/48 via 2001:db8:bbbb:00::1 dev eth1"
+
+    dc0-host01:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.201
+      exec:
+        - "ip -6 addr add 2001:db8:bbbb:01::2/64 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:bbbb:01::2/64 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 via 2001:db8:bbbb:01::1 dev eth1"
+        - "ip -6 route add fc00:0001::/32 via 2001:db8:bbbb:01::1 dev eth2"
+        - "ip -6 route add 2001:db8:bbbb::/48 via 2001:db8:bbbb:01::1 dev eth1"
+
+    dc1-host00:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.202
+      exec:
+        - "ip -6 addr add 2001:db8:bbbb:02::2/64 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:bbbb:02::2/64 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 via 2001:db8:bbbb:02::1 dev eth1"
+        - "ip -6 route add fc00:0001::/32 via 2001:db8:bbbb:02::1 dev eth2"
+        - "ip -6 route add 2001:db8:bbbb::/48 via 2001:db8:bbbb:02::1 dev eth1"
+
+    dc1-host01:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.203
+      exec:
+        - "ip -6 addr add 2001:db8:bbbb:03::2/64 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:bbbb:03::2/64 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 via 2001:db8:bbbb:03::1 dev eth1"
+        - "ip -6 route add fc00:0001::/32 via 2001:db8:bbbb:03::1 dev eth2"
+        - "ip -6 route add 2001:db8:bbbb::/48 via 2001:db8:bbbb:03::1 dev eth1"
+
+  links:
+
+    - endpoints: ["p0-leaf00:eth9", "green-host00:eth1"]
+    - endpoints: ["p0-leaf00:eth10", "yellow-host00:eth1"]
+    - endpoints: ["p0-leaf01:eth9", "green-host01:eth1"]
+    - endpoints: ["p0-leaf01:eth10", "yellow-host01:eth1"]
+    - endpoints: ["p0-leaf02:eth9", "green-host02:eth1"]
+    - endpoints: ["p0-leaf02:eth10", "yellow-host02:eth1"]
+    - endpoints: ["p0-leaf03:eth9", "green-host03:eth1"]
+    - endpoints: ["p0-leaf03:eth10", "yellow-host03:eth1"]
+    - endpoints: ["p0-leaf04:eth9", "green-host04:eth1"]
+    - endpoints: ["p0-leaf04:eth10", "yellow-host04:eth1"]
+    - endpoints: ["p0-leaf05:eth9", "green-host05:eth1"]
+    - endpoints: ["p0-leaf05:eth10", "yellow-host05:eth1"]
+    - endpoints: ["p0-leaf06:eth9", "green-host06:eth1"]
+    - endpoints: ["p0-leaf06:eth10", "yellow-host06:eth1"]
+    - endpoints: ["p0-leaf07:eth9", "green-host07:eth1"]
+    - endpoints: ["p0-leaf07:eth10", "yellow-host07:eth1"]
+    - endpoints: ["p1-leaf00:eth9", "green-host00:eth2"]
+    - endpoints: ["p1-leaf00:eth10", "yellow-host00:eth2"]
+    - endpoints: ["p1-leaf01:eth9", "green-host01:eth2"]
+    - endpoints: ["p1-leaf01:eth10", "yellow-host01:eth2"]
+    - endpoints: ["p1-leaf02:eth9", "green-host02:eth2"]
+    - endpoints: ["p1-leaf02:eth10", "yellow-host02:eth2"]
+    - endpoints: ["p1-leaf03:eth9", "green-host03:eth2"]
+    - endpoints: ["p1-leaf03:eth10", "yellow-host03:eth2"]
+    - endpoints: ["p1-leaf04:eth9", "green-host04:eth2"]
+    - endpoints: ["p1-leaf04:eth10", "yellow-host04:eth2"]
+    - endpoints: ["p1-leaf05:eth9", "green-host05:eth2"]
+    - endpoints: ["p1-leaf05:eth10", "yellow-host05:eth2"]
+    - endpoints: ["p1-leaf06:eth9", "green-host06:eth2"]
+    - endpoints: ["p1-leaf06:eth10", "yellow-host06:eth2"]
+    - endpoints: ["p1-leaf07:eth9", "green-host07:eth2"]
+    - endpoints: ["p1-leaf07:eth10", "yellow-host07:eth2"]

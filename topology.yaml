@@ -38,44 +38,6 @@ devices:
        ipv4 address 198.18.128.201/24
        no shut
 
-  # dc0p1sa0:
-  #   image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-  #   #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
-  #   cvac: config/dc0p1sa0.cfg
-  #   platform: spitfire_f
-  #   linecard_types: ['8223-64EF-M']
-  #   npu_asic_versions: [A0]
-  #   xr_port_redir: [22, 23]
-  #   xr_config: |
-  #     hostname dc0p1sa0
-  #     ssh server vrf default
-  #     ssh server rate-limit 600
-  #     ssh server session-limit 100
-  #     snmp-server community public RO
-  #     ssh
-  #     interface MgmtEth0/RP0/CPU0/0
-  #      ipv4 address 198.18.128.202/24
-  #      no shut
-
-  # dc0p1sa1:
-  #   image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-  #   #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
-  #   cvac: config/dc0p1sa1.cfg
-  #   platform: spitfire_f
-  #   linecard_types: ['8223-64EF-M']
-  #   npu_asic_versions: [A0]
-  #   xr_port_redir: [22, 23]
-  #   xr_config: |
-  #     hostname dc0p1sa1
-  #     ssh server vrf default
-  #     ssh server rate-limit 600
-  #     ssh server session-limit 100
-  #     snmp-server community public RO
-  #     ssh
-  #     interface MgmtEth0/RP0/CPU0/0
-  #      ipv4 address 198.18.128.203/24
-  #      no shut
-
   dc1p0sa0:
     image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
     #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
@@ -113,44 +75,6 @@ devices:
       interface MgmtEth0/RP0/CPU0/0
        ipv4 address 198.18.128.205/24
        no shut
-
-  # dc1p1sa0:
-  #   image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-  #   #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
-  #   cvac: config/dc1p1sa0.cfg
-  #   platform: spitfire_f
-  #   linecard_types: ['8223-64EF-M']
-  #   npu_asic_versions: [A0]
-  #   xr_port_redir: [22, 23]
-  #   xr_config: |
-  #     hostname dc1p1sa0
-  #     ssh server vrf default
-  #     ssh server rate-limit 600
-  #     ssh server session-limit 100
-  #     snmp-server community public RO
-  #     ssh
-  #     interface MgmtEth0/RP0/CPU0/0
-  #      ipv4 address 198.18.128.206/24
-  #      no shut
-
-  # dc1p1sa1:
-  #   image: /home/cisco/images/8000-eft17.2/packages/images/8000/xr/26.2.1/8000-x64-26.2.1.iso
-  #   #image: /home/cisco/images/8000-golden-x86_64-26.2.100.09I-APRILEFT.iso
-  #   cvac: config/dc1p1sa1.cfg
-  #   platform: spitfire_f
-  #   linecard_types: ['8223-64EF-M']
-  #   npu_asic_versions: [A0]
-  #   xr_port_redir: [22, 23]
-  #   xr_config: |
-  #     hostname dc1p1sa1
-  #     ssh server vrf default
-  #     ssh server rate-limit 600
-  #     ssh server session-limit 100
-  #     snmp-server community public RO
-  #     ssh
-  #     interface MgmtEth0/RP0/CPU0/0
-  #      ipv4 address 198.18.128.207/24
-  #      no shut
 
 connections:
   hubs:
@@ -218,133 +142,36 @@ connections:
       - dc0p0sa1.EightHundredGigE0/0/0/7
       - dc1p0sa0.EightHundredGigE0/0/0/7
 
-# plane 1
-    # p0l16:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/0
-    #   - dc1p1sa0.EightHundredGigE0/0/0/0
-
-    # p0l17:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/1
-    #   - dc1p1sa0.EightHundredGigE0/0/0/1
-
-    # p0l18:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/2
-    #   - dc1p1sa0.EightHundredGigE0/0/0/2
-
-    # p0l19:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/3
-    #   - dc1p1sa0.EightHundredGigE0/0/0/3
-
-    # p0l20:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/0
-    #   - dc1p1sa1.EightHundredGigE0/0/0/0
-
-    # p0l21:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/1
-    #   - dc1p1sa1.EightHundredGigE0/0/0/1
-
-    # p0l22:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/2
-    #   - dc1p1sa1.EightHundredGigE0/0/0/2
-
-    # p0l23:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/3
-    #   - dc1p1sa1.EightHundredGigE0/0/0/3
-
-    # p0l24:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/4
-    #   - dc1p1sa1.EightHundredGigE0/0/0/4
-
-    # p0l25:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/5
-    #   - dc1p1sa1.EightHundredGigE0/0/0/5
-
-    # p0l26:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/6
-    #   - dc1p1sa1.EightHundredGigE0/0/0/6
-
-    # p0l27:
-    #   - dc0p1sa0.EightHundredGigE0/0/0/7
-    #   - dc1p1sa1.EightHundredGigE0/0/0/7
-
-    # p0l28:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/4
-    #   - dc1p1sa0.EightHundredGigE0/0/0/4
-      
-    # p0l29:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/5
-    #   - dc1p1sa0.EightHundredGigE0/0/0/5
-
-    # p0l30:
-    #   - dc0p1sa1.EightHundredGigE0/0/0/6
-    #   - dc1p1sa0.EightHundredGigE0/0/0/6
-
-    # p0l31:  
-    #   - dc0p1sa1.EightHundredGigE0/0/0/7
-    #   - dc1p1sa0.EightHundredGigE0/0/0/7
-
   custom:
 
-    gpu0-l0:
+    dc0-host00-l0:
       ports: [dc0p0sa0.EightHundredGigE0/0/0/32]
-      linux_bridge: gp0-l0
+      linux_bridge: dc0-host00-l0
 
-    gpu0-l1:
+    dc0-host00-l1:
       ports: [dc0p0sa1.EightHundredGigE0/0/0/32]
-      linux_bridge: gp0-l1
+      linux_bridge: dc0-host00-l1
 
-    # gpu0-l2:
-    #   ports: [dc0p1sa0.EightHundredGigE0/0/0/32]
-    #   linux_bridge: gp0-l2
-
-    # gpu0-l3:
-    #   ports: [dc0p1sa1.EightHundredGigE0/0/0/32]
-    #   linux_bridge: gp0-l3
-
-    gpu1-l0:
+    dc0-host01-l0:
       ports: [dc0p0sa0.EightHundredGigE0/0/0/33]
-      linux_bridge: gp1-l0
+      linux_bridge: dc0-host01-l0
 
-    gpu1-l1:
+    dc0-host01-l1:
       ports: [dc0p0sa1.EightHundredGigE0/0/0/33]
-      linux_bridge: gp1-l1
-      
-    # gpu1-l2:
-    #   ports: [dc0p1sa0.EightHundredGigE0/0/0/33]
-    #   linux_bridge: gp1-l2
+      linux_bridge: dc0-host01-l1
 
-    # gpu1-l3:
-    #   ports: [dc0p1sa1.EightHundredGigE0/0/0/33]
-    #   linux_bridge: gp1-l3
-
-    gpu2-l0:
+    dc1-host00-l0:
       ports: [dc1p0sa0.EightHundredGigE0/0/0/32]
-      linux_bridge: gp1-l0
+      linux_bridge: dc1-host00-l0
 
-    gpu2-l1:
+    dc1-host00-l1:
       ports: [dc1p0sa1.EightHundredGigE0/0/0/32]
-      linux_bridge: gp1-l1
+      linux_bridge: dc1-host00-l1
 
-    # gpu2-l2:
-    #   ports: [dc1p1sa0.EightHundredGigE0/0/0/32]
-    #   linux_bridge: gp1-l2
+    dc1-host01-l0:
+      ports: [dc1p0sa0.EightHundredGigE0/0/0/33]
+      linux_bridge: dc1-host01-l0
 
-    # gpu2-l3:
-    #   ports: [dc1p1sa1.EightHundredGigE0/0/0/32]
-    #   linux_bridge: gp1-l3
-      
-    gpu3-l0:
-      ports: [dc0p0sa0.EightHundredGigE0/0/0/34]
-      linux_bridge: gp3-l0
-
-    gpu3-l1:
-      ports: [dc0p0sa1.EightHundredGigE0/0/0/34]
-      linux_bridge: gp3-l1
-      
-    # gpu3-l2:
-    #   ports: [dc0p1sa0.EightHundredGigE0/0/0/34]
-    #   linux_bridge: gp3-l2
-
-    # gpu3-l3:
-    #   ports: [dc0p1sa1.EightHundredGigE0/0/0/34]
-    #   linux_bridge: gp3-l3
+    dc1-host01-l1:
+      ports: [dc1p0sa1.EightHundredGigE0/0/0/33]
+      linux_bridge: dc1-host01-l1
