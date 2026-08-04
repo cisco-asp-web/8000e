@@ -2,22 +2,22 @@
 set -euo pipefail
 
 # Create ovs bridges
-sudo ovs-vsctl add-br p0l0
-sudo ovs-vsctl add-br p0l1
-sudo ovs-vsctl add-br p0l2
-sudo ovs-vsctl add-br p0l3
-sudo ovs-vsctl add-br p0l4
-sudo ovs-vsctl add-br p0l5
-sudo ovs-vsctl add-br p0l6
-sudo ovs-vsctl add-br p0l7
-sudo ovs-vsctl add-br p0l8
-sudo ovs-vsctl add-br p0l9
-sudo ovs-vsctl add-br p0l10
-sudo ovs-vsctl add-br p0l11
-sudo ovs-vsctl add-br p0l12
-sudo ovs-vsctl add-br p0l13
-sudo ovs-vsctl add-br p0l14
-sudo ovs-vsctl add-br p0l15
+sudo brctl addbr p0l0
+sudo brctl addbr p0l1
+sudo brctl addbr p0l2
+sudo brctl addbr p0l3
+sudo brctl addbr p0l4
+sudo brctl addbr p0l5
+sudo brctl addbr p0l6
+sudo brctl addbr p0l7
+sudo brctl addbr p0l8
+sudo brctl addbr p0l9
+sudo brctl addbr p0l10
+sudo brctl addbr p0l11
+sudo brctl addbr p0l12
+sudo brctl addbr p0l13
+sudo brctl addbr p0l14
+sudo brctl addbr p0l15
 
 sudo ip link set p0l0 up
 sudo ip link set p0l1 up

@@ -78,97 +78,97 @@ connections:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/0
       - dc1p0sa0.EightHundredGigE0/0/0/0
-      ovs_bridge: p0l0
+      linux_bridge: p0l0
       
     p0l1: 
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/1
       - dc1p0sa0.EightHundredGigE0/0/0/1
-      ovs_bridge: p0l1
+      linux_bridge: p0l1
           
     p0l2: 
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/2
       - dc1p0sa0.EightHundredGigE0/0/0/2
-      ovs_bridge: p0l2
+      linux_bridge: p0l2
       
     p0l3:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/3
       - dc1p0sa0.EightHundredGigE0/0/0/3
-      ovs_bridge: p0l3
+      linux_bridge: p0l3
       
     p0l4:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/0
       - dc1p0sa1.EightHundredGigE0/0/0/0
-      ovs_bridge: p0l4
+      linux_bridge: p0l4
       
     p0l5:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/1
       - dc1p0sa1.EightHundredGigE0/0/0/1
-      ovs_bridge: p0l5
+      linux_bridge: p0l5
       
     p0l6:   
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/2
       - dc1p0sa1.EightHundredGigE0/0/0/2
-      ovs_bridge: p0l6
+      linux_bridge: p0l6
       
     p0l7:   
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/3
       - dc1p0sa1.EightHundredGigE0/0/0/3
-      ovs_bridge: p0l7
+      linux_bridge: p0l7
       
     p0l8:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/4
       - dc1p0sa1.EightHundredGigE0/0/0/4
-      ovs_bridge: p0l8
+      linux_bridge: p0l8
       
     p0l9:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/5
       - dc1p0sa1.EightHundredGigE0/0/0/5
-      ovs_bridge: p0l9
+      linux_bridge: p0l9
 
     p0l10:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/6
       - dc1p0sa1.EightHundredGigE0/0/0/6
-      ovs_bridge: p0l10
+      linux_bridge: p0l10
       
     p0l11:
       ports:
       - dc0p0sa0.EightHundredGigE0/0/0/7
       - dc1p0sa1.EightHundredGigE0/0/0/7
-      ovs_bridge: p0l11
+      linux_bridge: p0l11
       
     p0l12:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/4
       - dc1p0sa0.EightHundredGigE0/0/0/4
-      ovs_bridge: p0l12
+      linux_bridge: p0l12
       
     p0l13:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/5
       - dc1p0sa0.EightHundredGigE0/0/0/5
-      ovs_bridge: p0l13
+      linux_bridge: p0l13
       
     p0l14:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/6
       - dc1p0sa0.EightHundredGigE0/0/0/6
-      ovs_bridge: p0l14
+      linux_bridge: p0l14
       
     p0l15:
       ports:
       - dc0p0sa1.EightHundredGigE0/0/0/7
       - dc1p0sa0.EightHundredGigE0/0/0/7
-      ovs_bridge: p0l15
+      linux_bridge: p0l15
       
 
     dc0-host00-l0:
