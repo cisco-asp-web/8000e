@@ -13,48 +13,48 @@ topology:
       image: alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.200
       exec:
-        - "ip -6 addr add 2001:db8:a000::2/64 dev eth1 nodad"
-        - "ip -6 addr add 2001:db8:a001::2/64 dev eth2 nodad"
-        - "ip -6 route add fc00:0000::/32 via 2001:db8:a000::1 dev eth1"
-        #- "ip -6 route add fc00:0000::/32 via 2001:db8:a001::1 dev eth2"
-        - "ip -6 route add 2001:db8:b000::/48 via 2001:db8:a000::1 dev eth1"
-        - "ip -6 route add 2001:db8:b001::/48 via 2001:db8:a001::1 dev eth2"
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:a000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::65/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::69/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::64 dev eth2"
+        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::68 dev eth2"
 
     dc0-host01:
       kind: linux
       image: alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.201
       exec:
-        - "ip -6 addr add 2001:db8:c000::2/64 dev eth1 nodad"
-        - "ip -6 addr add 2001:db8:c001::2/64 dev eth2 nodad"
-        - "ip -6 route add fc00:0000::/32 via 2001:db8:c000::1 dev eth1"
-        #- "ip -6 route add fc00:0000::/32 via 2001:db8:c001::1 dev eth2"
-        - "ip -6 route add 2001:db8:d000::/48 via 2001:db8:c000::1 dev eth1"
-        - "ip -6 route add 2001:db8:d001::/48 via 2001:db8:c001::1 dev eth2"
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::67/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::71/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2"
+        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2"
 
     dc1-host00:
       kind: linux
       image: alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.202
       exec:
-        - "ip -6 addr add 2001:db8:b000::2/64 dev eth1 nodad"
-        - "ip -6 addr add 2001:db8:b001::2/64 dev eth2 nodad"
-        - "ip -6 route add fc00:0000::/32 via 2001:db8:b000::1 dev eth1"
-        #- "ip -6 route add fc00:0001::/32 via 2001:db8:b001::1 dev eth2"
-        - "ip -6 route add 2001:db8:a000::/48 via 2001:db8:b000::1 dev eth1"
-        - "ip -6 route add 2001:db8:a001::/48 via 2001:db8:b001::1 dev eth2"
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::73/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::77/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2"
+        - "ip -6 route add 2001:db8:a000::/48 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2"
 
     dc1-host01:
       kind: linux
       image: alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.203
       exec:
-        - "ip -6 addr add 2001:db8:d000::2/64 dev eth1 nodad"
-        - "ip -6 addr add 2001:db8:d001::2/64 dev eth2 nodad"
-        - "ip -6 route add fc00:0000::/32 via 2001:db8:d000::1 dev eth1"
-        #- "ip -6 route add fc00:0001::/32 via 2001:db8:d001::1 dev eth2"
-        - "ip -6 route add 2001:db8:c000::/48 via 2001:db8:d000::1 dev eth1"
-        - "ip -6 route add 2001:db8:c001::/48 via 2001:db8:d001::1 dev eth2"
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:d000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::75/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::79/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2"
+        - "ip -6 route add 2001:db8:c000::/48 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2"
 
     dc0-host00-l0:
       kind: bridge
