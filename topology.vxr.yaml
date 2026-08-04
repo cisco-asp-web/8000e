@@ -174,7 +174,11 @@ connections:
       - dc0p0-node01.EightHundredGigE0/0/0/7
       - dc1p0-node00.EightHundredGigE0/0/0/7
       linux_bridge: p0l15
-      
+
+  # xrd-rr bridge
+    xrd-rr-br0:
+      ports: [dc0p0-node00.EightHundredGigE0/0/0/32]
+      linux_bridge: xrd-rr-br0
 
     dc0-host00-l0:
       ports: [dc0p0-node00.EightHundredGigE0/0/0/16]
