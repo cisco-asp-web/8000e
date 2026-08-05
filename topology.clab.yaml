@@ -55,20 +55,20 @@ topology:
 
     p00-xrd-rr:
       kind: cisco_xrd
-      image: ios-xr/xrd-control-plane:25.4.1
+      image: ios-xr/xrd-control-plane:26.2.1
       mgmt-ipv4: 172.20.21.192
       startup-config: config/p00-xrd-rr.cfg
 
     p01-xrd-rr:
       kind: cisco_xrd
-      image: ios-xr/xrd-control-plane:25.4.1
+      image: ios-xr/xrd-control-plane:26.2.1
       mgmt-ipv4: 172.20.21.193
       startup-config: config/p01-xrd-rr.cfg
 
     dc00-host00-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
-      image: bmcdougall/alpine-srv6-scapy:latest
+      image: bmcdougall/alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.21.200
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -104,7 +104,7 @@ topology:
     dc0-host01-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
-      image: bmcdougall/alpine-srv6-scapy:latest
+      image: bmcdougall/alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.201
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -140,7 +140,7 @@ topology:
     dc1-host00-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
-      image: bmcdougall/alpine-srv6-scapy:latest
+      image: bmcdougall/alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.202
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -176,7 +176,7 @@ topology:
     dc1-host01-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
-      image: bmcdougall/alpine-srv6-scapy:latest
+      image: bmcdougall/alpine-srv6-scapy:1.0
       mgmt-ipv4: 172.20.19.203
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
