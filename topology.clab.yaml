@@ -67,7 +67,8 @@ topology:
 
     dc00-host00-trn:
       kind: linux
-      image: alpine-srv6-scapy:1.0
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:latest
       mgmt-ipv4: 172.20.21.200
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -102,7 +103,8 @@ topology:
 
     dc0-host01-inf:
       kind: linux
-      image: alpine-srv6-scapy:1.0
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:latest
       mgmt-ipv4: 172.20.19.201
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -137,7 +139,8 @@ topology:
 
     dc1-host00-trn:
       kind: linux
-      image: alpine-srv6-scapy:1.0
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:latest
       mgmt-ipv4: 172.20.19.202
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
@@ -172,7 +175,8 @@ topology:
 
     dc1-host01-inf:
       kind: linux
-      image: alpine-srv6-scapy:1.0
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:latest
       mgmt-ipv4: 172.20.19.203
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
