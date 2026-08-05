@@ -1,0 +1,189 @@
+name: hosts-clab
+prefix: ""
+
+mgmt:
+  network: mgt-clab
+  ipv4-subnet: 172.20.19.0/24
+
+topology:
+  nodes:
+
+    xrd-rr:
+      kind: cisco_xrd
+      image: ios-xr/xrd-control-plane:25.4.1
+      mgmt-ipv4: 172.20.19.199
+      startup-config: config/xrd-rr.cfg
+
+    dc0-host00-trn:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.200
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:a000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::65/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::69/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::64 dev eth2"
+        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::68 dev eth2"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:a000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:a000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:a000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:a000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:a000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:a000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:a000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+
+    dc0-host01-inf:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.201
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::67/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::71/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2"
+        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:c000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:c000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:c000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:c000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:c000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:c000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:c000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+
+    dc1-host00-trn:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.202
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::73/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::77/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2"
+        - "ip -6 route add 2001:db8:a000::/48 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:b000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:b000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:b000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:b000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:b000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:b000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:b000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+
+    dc1-host01-inf:
+      kind: linux
+      image: alpine-srv6-scapy:1.0
+      mgmt-ipv4: 172.20.19.203
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "ip -6 addr add 2001:db8:d000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::75/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::79/127 dev eth2 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2"
+        - "ip -6 route add 2001:db8:c000::/48 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:d000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:d000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:d000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:d000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:d000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:d000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:d000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+
+    xrd-rr-br0:
+      kind: bridge
+
+    dc0-host00-l0:
+      kind: bridge
+
+    dc0-host00-l1:
+      kind: bridge
+
+    dc0-host01-l0:
+      kind: bridge
+
+    dc0-host01-l1:
+      kind: bridge
+
+    dc1-host00-l0:
+      kind: bridge
+
+    dc1-host00-l1:
+      kind: bridge
+
+    dc1-host01-l0:
+      kind: bridge
+
+    dc1-host01-l1:
+      kind: bridge
+
+  links:
+
+    - endpoints: ["xrd-rr:Gi0-0-0-0", "xrd-rr-br0:xrd-rr-Gi0-0-0-0"]
+    - endpoints: ["dc0-host00:eth1","dc0-host00-l0:dc0-host00-eth1"]
+    - endpoints: ["dc0-host00:eth2","dc0-host00-l1:dc0-host00-eth2"]
+
+    - endpoints: ["dc0-host01:eth1","dc0-host01-l0:dc0-host01-eth1"]
+    - endpoints: ["dc0-host01:eth2","dc0-host01-l1:dc0-host01-eth2"]
+
+    - endpoints: ["dc1-host00:eth1","dc1-host00-l0:dc1-host00-eth1"]
+    - endpoints: ["dc1-host00:eth2","dc1-host00-l1:dc1-host00-eth2"]
+
+    - endpoints: ["dc1-host01:eth1","dc1-host01-l0:dc1-host01-eth1"]
+    - endpoints: ["dc1-host01:eth2","dc1-host01-l1:dc1-host01-eth2"]
