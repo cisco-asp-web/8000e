@@ -105,7 +105,7 @@ topology:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.19.201
+      mgmt-ipv4: 172.20.21.201
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
@@ -141,7 +141,7 @@ topology:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.19.202
+      mgmt-ipv4: 172.20.21.202
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
