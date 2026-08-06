@@ -2,8 +2,12 @@ name: scale-across
 prefix: ""
 
 mgmt:
-  network: mgt-clab
-  ipv4-subnet: 172.20.21.0/24
+  # network: mgt-clab
+  # ipv4-subnet: 172.20.21.0/24
+  network: mgmt_intf2
+  bridge: mgmt_bridge2
+  ipv4-subnet: 198.18.204.0/24
+  ipv4-gw: 198.18.204.1
 
 topology:
 
@@ -15,61 +19,62 @@ topology:
   # naming convention: data center ID, plane ID, scale-across router
     dc00-p00-sar00:
       kind: linux
-      mgmt-ipv4: 172.20.21.100
+      mgmt-ipv4: 198.18.204.32
       binds: [config/dc00-p00-sar00.cfg:/startup.cfg:ro]
 
     dc00-p00-sar01:
       kind: linux
-      mgmt-ipv4: 172.20.21.101
+      mgmt-ipv4: 198.18.204.33
       binds: [config/dc00-p00-sar01.cfg:/startup.cfg:ro]
 
     dc01-p00-sar00:
       kind: linux
-      mgmt-ipv4: 172.20.21.102
+      mgmt-ipv4: 198.18.204.34
       binds: [config/dc01-p00-sar00.cfg:/startup.cfg:ro]
 
     dc01-p00-sar01:
       kind: linux
-      mgmt-ipv4: 172.20.21.103
+      mgmt-ipv4: 198.18.204.35
       binds: [config/dc01-p00-sar01.cfg:/startup.cfg:ro]
 
     dc00-p01-sar00:
       kind: linux
-      mgmt-ipv4: 172.20.21.104
+      mgmt-ipv4: 198.18.204.36
       binds: [config/dc00-p01-sar00.cfg:/startup.cfg:ro]
 
     dc00-p01-sar01:
       kind: linux
-      mgmt-ipv4: 172.20.21.105
+      mgmt-ipv4: 198.18.204.37
       binds: [config/dc00-p01-sar01.cfg:/startup.cfg:ro]
 
     dc01-p01-sar00:
       kind: linux
-      mgmt-ipv4: 172.20.21.106
+      mgmt-ipv4: 198.18.204.38
       binds: [config/dc01-p01-sar00.cfg:/startup.cfg:ro]
 
     dc01-p01-sar01:
       kind: linux
-      mgmt-ipv4: 172.20.21.107
+      mgmt-ipv4: 198.18.204.39
       binds: [config/dc01-p01-sar01.cfg:/startup.cfg:ro]
 
     p00-xrd-rr:
       kind: cisco_xrd
       image: ios-xr/xrd-control-plane:26.2.1
-      mgmt-ipv4: 172.20.21.192
+      mgmt-ipv4: 198.18.204.40
       startup-config: config/p00-xrd-rr.cfg
 
     p01-xrd-rr:
       kind: cisco_xrd
       image: ios-xr/xrd-control-plane:26.2.1
-      mgmt-ipv4: 172.20.21.193
+      mgmt-ipv4: 198.18.204.41
       startup-config: config/p01-xrd-rr.cfg
 
     dc00-host00-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.21.200
+      mgmt-ipv4: 198.18.204.64
+      binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:a000::1/128 dev lo nodad"
@@ -100,12 +105,15 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:a000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
+        # training all-to-all: a000[1..8] -> b000[1..8] full UDP mesh
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:a000:: --dst-prefix 2001:db8:b000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc0-host01-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.21.201
+      mgmt-ipv4: 198.18.204.65
+      binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
@@ -114,7 +122,7 @@ topology:
         - "ip -6 addr add 2001:db8:1:2::67/127 dev eth3 nodad"
         - "ip -6 addr add 2001:db8:1:2::71/127 dev eth4 nodad"
         - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2 nexthop via 2001:db8:1:2::66 dev eth3 nexthop via 2001:db8:1:2::70 dev eth4"
-        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2 nexthop via 2001:db8:1:2::66 dev eth3 nexthop via 2001:db8:1:2::70 dev eth4"
+        - "ip -6 route add 2001:db8:d000::/48 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2 nexthop via 2001:db8:1:2::66 dev eth3 nexthop via 2001:db8:1:2::70 dev eth4"
         - "ip link add lo2 type dummy"
         - "ip addr add 2001:db8:c000::2/128 dev lo2 nodad"
         - "ip link set lo2 up"
@@ -136,12 +144,15 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:c000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
+        # inference: c000[1..8] -> d000[1..8] paired (::i -> ::i) smaller UDP streams
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:c000:: --dst-prefix 2001:db8:d000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc1-host00-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.21.202
+      mgmt-ipv4: 198.18.204.66
+      binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
@@ -172,12 +183,15 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:b000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
+        # training all-to-all: b000[1..8] -> a000[1..8] full UDP mesh
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:b000:: --dst-prefix 2001:db8:a000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc1-host01-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
-      mgmt-ipv4: 172.20.21.203
+      mgmt-ipv4: 198.18.204.67
+      binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
         - "ip -6 addr add 2001:db8:d000::1/128 dev lo nodad"
@@ -208,6 +222,8 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:d000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
+        # inference: d000[1..8] -> c000[1..8] paired (::i -> ::i) smaller UDP streams
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:d000:: --dst-prefix 2001:db8:c000:: >/var/log/trafgen.log 2>&1 &'"
 
   links:
   # plane 0
