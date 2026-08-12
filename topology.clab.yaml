@@ -16,60 +16,62 @@ topology:
       image: 8223-64ef-m:26.2.1
 
   nodes:
-  # naming convention: data center ID, plane ID, scale-across router
-    dc00-p00-sar00:
+  # r01-r04 = DC1, r05-r08 = DC2. Within each DC the first pair is plane 0 and
+  # the second is plane 1: r01/r02 and r05/r06 on plane 0, r03/r04 and r07/r08
+  # on plane 1. mgmt addressing is sequential, r01 = .32 through r08 = .39.
+    r01:
       kind: linux
       mgmt-ipv4: 198.18.204.32
-      binds: [config/dc00-p00-sar00.cfg:/startup.cfg:ro]
+      binds: [config/r01.cfg:/startup.cfg:ro]
 
-    dc00-p00-sar01:
+    r02:
       kind: linux
       mgmt-ipv4: 198.18.204.33
-      binds: [config/dc00-p00-sar01.cfg:/startup.cfg:ro]
+      binds: [config/r02.cfg:/startup.cfg:ro]
 
-    dc01-p00-sar00:
+    r03:
       kind: linux
       mgmt-ipv4: 198.18.204.34
-      binds: [config/dc01-p00-sar00.cfg:/startup.cfg:ro]
+      binds: [config/r03.cfg:/startup.cfg:ro]
 
-    dc01-p00-sar01:
+    r04:
       kind: linux
       mgmt-ipv4: 198.18.204.35
-      binds: [config/dc01-p00-sar01.cfg:/startup.cfg:ro]
+      binds: [config/r04.cfg:/startup.cfg:ro]
 
-    dc00-p01-sar00:
+    r05:
       kind: linux
       mgmt-ipv4: 198.18.204.36
-      binds: [config/dc00-p01-sar00.cfg:/startup.cfg:ro]
+      binds: [config/r05.cfg:/startup.cfg:ro]
 
-    dc00-p01-sar01:
+    r06:
       kind: linux
       mgmt-ipv4: 198.18.204.37
-      binds: [config/dc00-p01-sar01.cfg:/startup.cfg:ro]
+      binds: [config/r06.cfg:/startup.cfg:ro]
 
-    dc01-p01-sar00:
+    r07:
       kind: linux
       mgmt-ipv4: 198.18.204.38
-      binds: [config/dc01-p01-sar00.cfg:/startup.cfg:ro]
+      binds: [config/r07.cfg:/startup.cfg:ro]
 
-    dc01-p01-sar01:
+    r08:
       kind: linux
       mgmt-ipv4: 198.18.204.39
-      binds: [config/dc01-p01-sar01.cfg:/startup.cfg:ro]
+      binds: [config/r08.cfg:/startup.cfg:ro]
 
-    p00-xrd-rr:
+    rr01:
       kind: cisco_xrd
       image: ios-xr/xrd-control-plane:26.2.1
       mgmt-ipv4: 198.18.204.40
-      startup-config: config/p00-xrd-rr.cfg
+      startup-config: config/rr01.cfg
 
-    p01-xrd-rr:
+    rr02:
       kind: cisco_xrd
       image: ios-xr/xrd-control-plane:26.2.1
       mgmt-ipv4: 198.18.204.41
-      startup-config: config/p01-xrd-rr.cfg
+      startup-config: config/rr02.cfg
 
-    dc00-host00-trn:
+    dc01-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
@@ -77,6 +79,7 @@ topology:
       binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
         - "ip -6 addr add 2001:db8:a000::1/128 dev lo nodad"
         - "ip -6 addr add 2001:db8:1:1::65/127 dev eth1 nodad"
         - "ip -6 addr add 2001:db8:1:1::69/127 dev eth2 nodad"
@@ -108,7 +111,7 @@ topology:
         # training all-to-all: a000[1..8] -> b000[1..8] full UDP mesh
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:a000:: --dst-prefix 2001:db8:b000:: >/var/log/trafgen.log 2>&1 &'"
 
-    dc00-host01-inf:
+    dc01-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
@@ -116,6 +119,7 @@ topology:
       binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
         - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
         - "ip -6 addr add 2001:db8:1:1::67/127 dev eth1 nodad"
         - "ip -6 addr add 2001:db8:1:1::71/127 dev eth2 nodad"
@@ -147,7 +151,7 @@ topology:
         # inference: c000[1..8] -> d000[1..8] paired (::i -> ::i) smaller UDP streams
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:c000:: --dst-prefix 2001:db8:d000:: >/var/log/trafgen.log 2>&1 &'"
 
-    dc01-host00-trn:
+    dc02-trn:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
@@ -155,6 +159,7 @@ topology:
       binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
         - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
         - "ip -6 addr add 2001:db8:1:1::73/127 dev eth1 nodad"
         - "ip -6 addr add 2001:db8:1:1::77/127 dev eth2 nodad"
@@ -186,7 +191,7 @@ topology:
         # training all-to-all: b000[1..8] -> a000[1..8] full UDP mesh
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:b000:: --dst-prefix 2001:db8:a000:: >/var/log/trafgen.log 2>&1 &'"
 
-    dc01-host01-inf:
+    dc02-inf:
       kind: linux
       #image: alpine-srv6-scapy:1.0
       image: bmcdougall/alpine-srv6-scapy:1.0
@@ -194,6 +199,7 @@ topology:
       binds: [scripts:/scripts:ro]
       exec:
         - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
         - "ip -6 addr add 2001:db8:d000::1/128 dev lo nodad"
         - "ip -6 addr add 2001:db8:1:1::75/127 dev eth1 nodad"
         - "ip -6 addr add 2001:db8:1:1::79/127 dev eth2 nodad"
@@ -227,69 +233,69 @@ topology:
 
   links:
   # plane 0
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_0", "dc01-p00-sar00:EH0_0_0_0"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_1", "dc01-p00-sar00:EH0_0_0_1"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_2", "dc01-p00-sar00:EH0_0_0_2"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_3", "dc01-p00-sar00:EH0_0_0_3"]
+    - endpoints: ["r01:EH0_0_0_0", "r05:EH0_0_0_0"]
+    - endpoints: ["r01:EH0_0_0_1", "r05:EH0_0_0_1"]
+    - endpoints: ["r01:EH0_0_0_2", "r05:EH0_0_0_2"]
+    - endpoints: ["r01:EH0_0_0_3", "r05:EH0_0_0_3"]
 
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_0", "dc01-p00-sar01:EH0_0_0_0"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_1", "dc01-p00-sar01:EH0_0_0_1"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_2", "dc01-p00-sar01:EH0_0_0_2"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_3", "dc01-p00-sar01:EH0_0_0_3"]
+    - endpoints: ["r02:EH0_0_0_0", "r06:EH0_0_0_0"]
+    - endpoints: ["r02:EH0_0_0_1", "r06:EH0_0_0_1"]
+    - endpoints: ["r02:EH0_0_0_2", "r06:EH0_0_0_2"]
+    - endpoints: ["r02:EH0_0_0_3", "r06:EH0_0_0_3"]
 
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_4", "dc01-p00-sar01:EH0_0_0_4"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_5", "dc01-p00-sar01:EH0_0_0_5"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_6", "dc01-p00-sar01:EH0_0_0_6"]
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_7", "dc01-p00-sar01:EH0_0_0_7"]
+    - endpoints: ["r01:EH0_0_0_4", "r06:EH0_0_0_4"]
+    - endpoints: ["r01:EH0_0_0_5", "r06:EH0_0_0_5"]
+    - endpoints: ["r01:EH0_0_0_6", "r06:EH0_0_0_6"]
+    - endpoints: ["r01:EH0_0_0_7", "r06:EH0_0_0_7"]
 
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_4", "dc01-p00-sar00:EH0_0_0_4"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_5", "dc01-p00-sar00:EH0_0_0_5"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_6", "dc01-p00-sar00:EH0_0_0_6"]
-    - endpoints: ["dc00-p00-sar01:EH0_0_0_7", "dc01-p00-sar00:EH0_0_0_7"]
+    - endpoints: ["r02:EH0_0_0_4", "r05:EH0_0_0_4"]
+    - endpoints: ["r02:EH0_0_0_5", "r05:EH0_0_0_5"]
+    - endpoints: ["r02:EH0_0_0_6", "r05:EH0_0_0_6"]
+    - endpoints: ["r02:EH0_0_0_7", "r05:EH0_0_0_7"]
 
   # plane 0 hosts
-    - endpoints: ["dc00-host00-trn:eth1", "dc00-p00-sar00:EH0_0_0_16"]
-    - endpoints: ["dc00-host00-trn:eth2", "dc00-p00-sar01:EH0_0_0_16"]
-    - endpoints: ["dc00-host01-inf:eth1", "dc00-p00-sar00:EH0_0_0_17"]
-    - endpoints: ["dc00-host01-inf:eth2", "dc00-p00-sar01:EH0_0_0_17"]
-    - endpoints: ["dc01-host00-trn:eth1", "dc01-p00-sar00:EH0_0_0_16"]
-    - endpoints: ["dc01-host00-trn:eth2", "dc01-p00-sar01:EH0_0_0_16"]
-    - endpoints: ["dc01-host01-inf:eth1", "dc01-p00-sar00:EH0_0_0_17"]
-    - endpoints: ["dc01-host01-inf:eth2", "dc01-p00-sar01:EH0_0_0_17"]
+    - endpoints: ["dc01-trn:eth1", "r01:EH0_0_0_16"]
+    - endpoints: ["dc01-trn:eth2", "r02:EH0_0_0_16"]
+    - endpoints: ["dc01-inf:eth1", "r01:EH0_0_0_17"]
+    - endpoints: ["dc01-inf:eth2", "r02:EH0_0_0_17"]
+    - endpoints: ["dc02-trn:eth1", "r05:EH0_0_0_16"]
+    - endpoints: ["dc02-trn:eth2", "r06:EH0_0_0_16"]
+    - endpoints: ["dc02-inf:eth1", "r05:EH0_0_0_17"]
+    - endpoints: ["dc02-inf:eth2", "r06:EH0_0_0_17"]
 
   # plane 0 RR
-    - endpoints: ["dc00-p00-sar00:EH0_0_0_32", "p00-xrd-rr:Gi0-0-0-0"]
+    - endpoints: ["r01:EH0_0_0_32", "rr01:Gi0-0-0-0"]
 
   # plane 1
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_0", "dc01-p01-sar00:EH0_0_0_0"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_1", "dc01-p01-sar00:EH0_0_0_1"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_2", "dc01-p01-sar00:EH0_0_0_2"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_3", "dc01-p01-sar00:EH0_0_0_3"]
+    - endpoints: ["r03:EH0_0_0_0", "r07:EH0_0_0_0"]
+    - endpoints: ["r03:EH0_0_0_1", "r07:EH0_0_0_1"]
+    - endpoints: ["r03:EH0_0_0_2", "r07:EH0_0_0_2"]
+    - endpoints: ["r03:EH0_0_0_3", "r07:EH0_0_0_3"]
 
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_0", "dc01-p01-sar01:EH0_0_0_0"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_1", "dc01-p01-sar01:EH0_0_0_1"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_2", "dc01-p01-sar01:EH0_0_0_2"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_3", "dc01-p01-sar01:EH0_0_0_3"]
+    - endpoints: ["r04:EH0_0_0_0", "r08:EH0_0_0_0"]
+    - endpoints: ["r04:EH0_0_0_1", "r08:EH0_0_0_1"]
+    - endpoints: ["r04:EH0_0_0_2", "r08:EH0_0_0_2"]
+    - endpoints: ["r04:EH0_0_0_3", "r08:EH0_0_0_3"]
 
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_4", "dc01-p01-sar01:EH0_0_0_4"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_5", "dc01-p01-sar01:EH0_0_0_5"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_6", "dc01-p01-sar01:EH0_0_0_6"]
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_7", "dc01-p01-sar01:EH0_0_0_7"]
+    - endpoints: ["r03:EH0_0_0_4", "r08:EH0_0_0_4"]
+    - endpoints: ["r03:EH0_0_0_5", "r08:EH0_0_0_5"]
+    - endpoints: ["r03:EH0_0_0_6", "r08:EH0_0_0_6"]
+    - endpoints: ["r03:EH0_0_0_7", "r08:EH0_0_0_7"]
 
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_4", "dc01-p01-sar00:EH0_0_0_4"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_5", "dc01-p01-sar00:EH0_0_0_5"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_6", "dc01-p01-sar00:EH0_0_0_6"]
-    - endpoints: ["dc00-p01-sar01:EH0_0_0_7", "dc01-p01-sar00:EH0_0_0_7"]
+    - endpoints: ["r04:EH0_0_0_4", "r07:EH0_0_0_4"]
+    - endpoints: ["r04:EH0_0_0_5", "r07:EH0_0_0_5"]
+    - endpoints: ["r04:EH0_0_0_6", "r07:EH0_0_0_6"]
+    - endpoints: ["r04:EH0_0_0_7", "r07:EH0_0_0_7"]
 
   # plane 1 hosts
-    - endpoints: ["dc00-host00-trn:eth3", "dc00-p01-sar00:EH0_0_0_16"]
-    - endpoints: ["dc00-host00-trn:eth4", "dc00-p01-sar01:EH0_0_0_16"]
-    - endpoints: ["dc00-host01-inf:eth3", "dc00-p01-sar00:EH0_0_0_17"]
-    - endpoints: ["dc00-host01-inf:eth4", "dc00-p01-sar01:EH0_0_0_17"]
-    - endpoints: ["dc01-host00-trn:eth3", "dc01-p01-sar00:EH0_0_0_16"]
-    - endpoints: ["dc01-host00-trn:eth4", "dc01-p01-sar01:EH0_0_0_16"]
-    - endpoints: ["dc01-host01-inf:eth3", "dc01-p01-sar00:EH0_0_0_17"]
-    - endpoints: ["dc01-host01-inf:eth4", "dc01-p01-sar01:EH0_0_0_17"]
+    - endpoints: ["dc01-trn:eth3", "r03:EH0_0_0_16"]
+    - endpoints: ["dc01-trn:eth4", "r04:EH0_0_0_16"]
+    - endpoints: ["dc01-inf:eth3", "r03:EH0_0_0_17"]
+    - endpoints: ["dc01-inf:eth4", "r04:EH0_0_0_17"]
+    - endpoints: ["dc02-trn:eth3", "r07:EH0_0_0_16"]
+    - endpoints: ["dc02-trn:eth4", "r08:EH0_0_0_16"]
+    - endpoints: ["dc02-inf:eth3", "r07:EH0_0_0_17"]
+    - endpoints: ["dc02-inf:eth4", "r08:EH0_0_0_17"]
 
   # plane 1 RR
-    - endpoints: ["dc00-p01-sar00:EH0_0_0_32", "p01-xrd-rr:Gi0-0-0-0"]
+    - endpoints: ["r03:EH0_0_0_32", "rr02:Gi0-0-0-0"]

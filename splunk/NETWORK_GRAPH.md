@@ -13,8 +13,8 @@ Usually caused by bad newline escaping when the SPL is embedded in dashboard JSO
 (literal `\n` text instead of real line breaks). Regenerate with:
 
 ```bash
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  --dashboard scripts/topology_network_graph.dashboard.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  --dashboard splunk/topology_network_graph.dashboard.json
 ```
 
 **Workaround:** skip the JSON import — create a blank Dashboard Studio dashboard,
@@ -26,9 +26,9 @@ search** (not the dashboard source), then wire the viz options from Step 2 below
 Regenerate and import the dashboard JSON (SPL + viz wiring included):
 
 ```bash
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  -o scripts/topology_network_graph.spl \
-  --dashboard scripts/topology_network_graph.dashboard.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  -o splunk/topology_network_graph.spl \
+  --dashboard splunk/topology_network_graph.dashboard.json
 ```
 
 In Splunk:
@@ -53,8 +53,10 @@ is not accepted by Dashboard Studio schema validation and blocks **Apply**).
 | Scale Across Plane-1 | center upper (y=80) |
 | Scale Across Plane-2 | center lower (y=420) |
 
-Node display names (`nodeTexts`) come from `DISPLAY_LABELS` in `topo_to_spl.py`
-(e.g. `dc1-router1`, `dc2-training`). Hostnames remain in `source` for tooltips.
+Node display names (`nodeTexts`) come from `DISPLAY_LABELS` in `topo_to_spl.py`.
+Routers are already short so they render as their hostname (`r01` … `r08`);
+only the hosts are relabelled by role (`dc01-trn` → `training`). Hostnames
+remain in `source` for tooltips and for the traffic panel's `$router$` token.
 
 Shared label styling: white bold text (`fontColor` / `customFontSize` 20),
 `fontSize: "custom"`, markdown `**label**`. Label and graph panels both use
@@ -73,8 +75,8 @@ Run the SPL in Search. In the results **Statistics** tab you should see:
 
 | source | nodeRole | nodeSize |
 |--------|----------|----------|
-| dc00-p00-sar00 | sar_p00 | 28 |
-| dc00-host00-trn | trn | 18 |
+| r01 | sar_p00 | 28 |
+| dc01-trn | trn | 18 |
 
 If those columns look correct, the SPL is fine — the viz config is what's missing.
 
@@ -149,8 +151,8 @@ use shorter display labels while keeping full hostnames in tooltips:
 Regenerate SPL with compact labels:
 
 ```bash
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml --short-labels \
-  -o scripts/topology_network_graph.spl
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml --short-labels \
+  -o splunk/topology_network_graph.spl
 ```
 
 Short label examples: `d0/p0/s0`, `d0/trn`, `d1/inf`. Hover a node to see the
@@ -194,13 +196,16 @@ color them individually in `linkColorsEditorConfig`:
 
 | Role pattern | Endpoint |
 |--------------|----------|
-| `training0-link0` | DC0 training → p00 sar00 |
-| `training0-link1` | DC0 training → p00 sar01 |
-| `training0-link2` | DC0 training → p01 sar00 |
-| `training0-link3` | DC0 training → p01 sar01 |
-| `inference0-link0` … `link3` | DC0 inference (same SAR order) |
-| `training1-link0` … `link3` | DC1 training |
-| `inference1-link0` … `link3` | DC1 inference |
+| `training0-link0` | `dc01-trn` → `r01` (Plane-1) |
+| `training0-link1` | `dc01-trn` → `r02` (Plane-1) |
+| `training0-link2` | `dc01-trn` → `r03` (Plane-2) |
+| `training0-link3` | `dc01-trn` → `r04` (Plane-2) |
+| `inference0-link0` … `link3` | `dc01-inf` (same router order) |
+| `training1-link0` … `link3` | `dc02-trn` → `r05` … `r08` |
+| `inference1-link0` … `link3` | `dc02-inf` → `r05` … `r08` |
+
+The trailing index is `plane * 2 + pair`, derived from the `ROUTERS` table in
+`topo_to_spl.py` rather than from the hostname.
 
 Edit colors in the dashboard JSON under `linkColorsEditorConfig`, or set defaults
 in `HOST_LINK_COLOR_DEFAULTS` in `topo_to_spl.py`.
@@ -208,9 +213,9 @@ in `HOST_LINK_COLOR_DEFAULTS` in `topo_to_spl.py`.
 ## Regenerate after topology changes
 
 ```bash
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  -o scripts/topology_network_graph.spl \
-  --patch-dashboard scripts/topology_network_graph.dashboard.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  -o splunk/topology_network_graph.spl \
+  --patch-dashboard splunk/topology_network_graph.dashboard.json
 ```
 
 Use `--patch-dashboard` to refresh the embedded SPL query, link/node color
@@ -218,7 +223,7 @@ config, and node positions while preserving your layout and label tweaks.
 Use `--dashboard` only for a fresh JSON from scratch.
 
 Styling source of truth in code:
-- `scripts/colors.cfg` — node palette (purple, light_blue, blue, …)
+- `splunk/colors.cfg` — node palette (purple, light_blue, blue, …)
 - `FABRIC_LINK_COLOR_DEFAULTS` / `HOST_LINK_COLOR_DEFAULTS` in `topo_to_spl.py` — per-link colors
 - `topology_network_graph.dashboard.json` — final layout; patch merges generator updates in place
 

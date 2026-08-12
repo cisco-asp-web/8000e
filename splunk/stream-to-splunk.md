@@ -28,7 +28,7 @@ flowchart LR
 References: [cisco-splunk-mdt](https://github.com/ciscops/cisco-splunk-mdt),
 [Splunk Lantern gRPC guide](https://lantern.splunk.com/Platform_Data_Management/Unlock_Insights/Monitoring_Cisco_network_devices_using_gRPC).
 
-Lab config in repo: `config/telegraf/telegraf.conf`, `config/dc00-p00-sar00.cfg`
+Lab config in repo: `config/telegraf/telegraf.conf`, `config/r01.cfg`
 (telemetry block replicated on other SARs).
 
 | Component | Lab value |
@@ -87,7 +87,7 @@ ss -lntp | grep 57400
 
 ## Step 3 — IOS-XR MDT (SAR routers)
 
-Example from `config/dc00-p00-sar00.cfg`:
+Example from `config/r01.cfg`:
 
 ```iosxr
 telemetry model-driven
@@ -157,7 +157,7 @@ List interfaces per router:
 
 ### Link traffic time-series (panel SPL)
 
-Tokens: `$router$` (e.g. `dc00-p00-sar00`), `$ifname$` (e.g. `EightHundredGigE0/0/0/0`).
+Tokens: `$router$` (e.g. `r01`), `$ifname$` (e.g. `EightHundredGigE0/0/0/0`).
 
 **Outbound Mbps** (verified working):
 
@@ -178,7 +178,7 @@ Tokens: `$router$` (e.g. `dc00-p00-sar00`), `$ifname$` (e.g. `EightHundredGigE0/
   WHERE index=mdt_metrics
     metric_name="openconfig-interfaces:interfaces/interface.state/counters/out_octets"
     name="EightHundredGigE0/0/0/0"
-    source="dc00-p00-sar00"
+    source="r01"
   span=120s
 | eval mbps=round(octets_per_sec * 8 / 1000000, 3)
 | timechart span=30s avg(mbps) AS "Outbound Mbps"
@@ -230,9 +230,9 @@ Each topology link row now includes **`linkRouter`** and **`linkIfname`** (parse
 IOS-XR interface descriptions in `config/*.cfg`). Regenerate with:
 
 ```bash
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  -o scripts/topology_network_graph.spl \
-  --patch-dashboard scripts/topology_network_graph.dashboard.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  -o splunk/topology_network_graph.spl \
+  --patch-dashboard splunk/topology_network_graph.dashboard.json
 ```
 
 **Dashboard wiring** (`topology_network_graph.dashboard.json`):
@@ -245,18 +245,18 @@ python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
 Example mapping (fabric):
 
 ```
-source=dc00-p00-sar00  target=dc01-p00-sar00  linkRole=plane0-link0
-linkRouter=dc00-p00-sar00  linkIfname=EightHundredGigE0/0/0/0
+source=r01  target=r05  linkRole=plane0-link0
+linkRouter=r01  linkIfname=EightHundredGigE0/0/0/0
 ```
 
 Interface descriptions in router config:
 
 ```iosxr
 interface EightHundredGigE0/0/0/0
- description to dc01-p00-sar00 link0
+ description to r05 link0
 ```
 
-Host links use `dc00-host00-l0` / `dc1-host00-l1` style descriptions on the SAR side.
+Host links use `dc01-trn-l0` / `dc02-trn-l1` style descriptions on the SAR side.
 
 ---
 
@@ -285,12 +285,12 @@ Host links use `dc00-host00-l0` / `dc1-host00-l1` style descriptions on the SAR 
 
 ```bash
 # Topology dashboard (separate from telemetry)
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  -o scripts/topology_network_graph.spl \
-  --patch-dashboard scripts/topology_network_graph.dashboard.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  -o splunk/topology_network_graph.spl \
+  --patch-dashboard splunk/topology_network_graph.dashboard.json
 
-python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
-  --demo-dashboard scripts/topology_network_graph.demo.json
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  --demo-dashboard splunk/topology_network_graph.demo.json
 ```
 
 ---
@@ -302,4 +302,4 @@ python3 scripts/topo_to_spl.py --topo topology.clab.yaml \
 3. ~~Lookup `linkRole` → `(router, ifname)`~~ **done** (`linkRouter`, `linkIfname` in SPL)
 4. ~~Wire Network Graph Set tokens + timechart panel~~ **done** (re-import patched dashboard JSON)
 
-See also: `scripts/NETWORK_GRAPH.md`, `scripts/topo_to_spl.py`.
+See also: `splunk/NETWORK_GRAPH.md`, `splunk/topo_to_spl.py`.

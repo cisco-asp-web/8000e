@@ -25,7 +25,7 @@ physical link separately.
 
 Usage:
   ./topo_to_spl.py [--topo topology.clab.yaml] [--expand] [-o out.spl]
-  ./topo_to_spl.py --demo-dashboard scripts/topology_network_graph.demo.json
+  ./topo_to_spl.py --demo-dashboard splunk/topology_network_graph.demo.json
   ./topo_to_spl.py --demo-state training -o training.spl --dashboard training.json
 """
 
@@ -41,7 +41,7 @@ _REPO_ROOT = os.path.dirname(_SCRIPT_DIR)
 
 
 def load_colors_cfg(path=None):
-    """Parse scripts/colors.cfg (name: #hex) for shared palette references."""
+    """Parse splunk/colors.cfg (name: #hex) for shared palette references."""
     path = path or os.path.join(_SCRIPT_DIR, "colors.cfg")
     colors = {}
     if not os.path.isfile(path):
@@ -119,12 +119,31 @@ DEMO_TAB_LABELS = {
 TRAINING_LINK_COLOR = PALETTE.get("red", "#af575a")
 INFERENCE_LINK_COLOR = PALETTE.get("yellow", "#f8be44")
 
-# Host access link roles: {kind}{dc}-link{0-3} (plane/sar index).
+# Fabric routers: name -> (dc_index, plane_index, pair_index). The hostnames
+# deliberately carry no topology, so a router's place in the fabric is declared
+# here: dc_index 0/1 = DC-1/DC-2, plane_index 0/1 = Plane-1/Plane-2, and
+# pair_index distinguishes the two routers a host dual-homes onto in one plane.
+ROUTERS = {
+    "r01": (0, 0, 0),
+    "r02": (0, 0, 1),
+    "r03": (0, 1, 0),
+    "r04": (0, 1, 1),
+    "r05": (1, 0, 0),
+    "r06": (1, 0, 1),
+    "r07": (1, 1, 0),
+    "r08": (1, 1, 1),
+}
+
+# Route reflectors are plane-scoped, not per-DC: each peers with all four
+# routers of one plane across both data centers. name -> plane_index.
+ROUTE_REFLECTORS = {"rr01": 0, "rr02": 1}
+
+# Host access link roles: {kind}{dc}-link{0-3} (plane/pair index).
 HOST_LINK_HOSTS = {
-    "dc00-host00-trn": ("training", 0),
-    "dc00-host01-inf": ("inference", 0),
-    "dc01-host00-trn": ("training", 1),
-    "dc01-host01-inf": ("inference", 1),
+    "dc01-trn": ("training", 0),
+    "dc01-inf": ("inference", 0),
+    "dc02-trn": ("training", 1),
+    "dc02-inf": ("inference", 1),
 }
 
 
@@ -155,32 +174,22 @@ def _link_role_sort_key(role):
 
 def short_label(name):
     """Compact node label for the graph (full name remains in source/tooltip)."""
-    m = re.match(r"dc(\d+)-p(\d+)-sar(\d+)", name)
-    if m:
-        return f"d{m.group(1)}/p{m.group(2)}/s{m.group(3)}"
-    if name.endswith("-trn"):
-        dc = "0" if name.startswith("dc0") else "1"
-        return f"d{dc}/trn"
-    if name.endswith("-inf"):
-        dc = "0" if name.startswith("dc0") else "1"
-        return f"d{dc}/inf"
+    if name in ROUTERS:
+        dc, plane, pair = ROUTERS[name]
+        return f"d{dc + 1}/p{plane + 1}/s{pair}"
+    if name in HOST_LINK_HOSTS:
+        kind, dc = HOST_LINK_HOSTS[name]
+        return f"d{dc + 1}/{kind[:3]}"
     return name
 
 
 # Friendly node labels shown on the graph (source/tooltip keeps hostname).
+# Router names are already short, so only the hosts are relabelled by role.
 DISPLAY_LABELS = {
-    "dc00-p00-sar00": "r01",
-    "dc00-p00-sar01": "r02",
-    "dc01-p00-sar00": "r05",
-    "dc01-p00-sar01": "r06",
-    "dc00-p01-sar00": "r03",
-    "dc00-p01-sar01": "r04",
-    "dc01-p01-sar00": "r07",
-    "dc01-p01-sar01": "r08",
-    "dc00-host00-trn": "training",
-    "dc00-host01-inf": "inference",
-    "dc01-host00-trn": "training",
-    "dc01-host01-inf": "inference",
+    "dc01-trn": "training",
+    "dc01-inf": "inference",
+    "dc02-trn": "training",
+    "dc02-inf": "inference",
 }
 
 
@@ -196,20 +205,20 @@ def classify(name):
         return "trn"
     if name.endswith("-inf"):
         return "inf"
-    if "sar" in name:
-        return "sar_p01" if "-p01-" in name else "sar_p00"
-    return "sar_p00"
+    return "sar_p01" if plane_index(name) else "sar_p00"
 
 
 def data_center(name):
-    """Cluster label. DC0 side = dc00-*/dc0-*; DC1 side = dc01-*/dc1-*."""
-    if name.startswith("dc01") or name.startswith("dc1-"):
-        return "DC1"
-    return "DC0"
+    """Cluster label used as the SPL `type` column: DC1 or DC2."""
+    if name in ROUTERS:
+        return f"DC{ROUTERS[name][0] + 1}"
+    if name in HOST_LINK_HOSTS:
+        return f"DC{HOST_LINK_HOSTS[name][1] + 1}"
+    return "DC1"  # route reflectors attach to DC-1 routers
 
 
 def is_route_reflector(name):
-    return "xrd-rr" in name
+    return name in ROUTE_REFLECTORS
 
 
 def link_category(a, b, roles):
@@ -219,20 +228,22 @@ def link_category(a, b, roles):
     return "fabric"
 
 
-def plane_key(name):
-    return "p01" if "-p01-" in name else "p00"
+def plane_index(name):
+    """0 = Plane-1, 1 = Plane-2. Unknown nodes fall back to plane 0."""
+    if name in ROUTERS:
+        return ROUTERS[name][1]
+    return ROUTE_REFLECTORS.get(name, 0)
 
 
 class FabricLinkRoleAssigner:
     """Assign plane{0|1}-link{0-3} roles to scale-across fabric bundles."""
 
     def __init__(self):
-        self._bundle_idx = {"p00": 0, "p01": 0}
-        self._last_bundle = {"p00": None, "p01": None}
+        self._bundle_idx = [0, 0]
+        self._last_bundle = [None, None]
 
     def classify(self, src, dst):
-        plane = plane_key(src)
-        plane_idx = 1 if plane == "p01" else 0
+        plane = plane_index(src)
         bundle = tuple(sorted((src, dst)))
         if bundle != self._last_bundle[plane]:
             link_idx = self._bundle_idx[plane]
@@ -240,7 +251,7 @@ class FabricLinkRoleAssigner:
             self._last_bundle[plane] = bundle
         else:
             link_idx = self._bundle_idx[plane] - 1
-        role = f"plane{plane_idx}-link{link_idx}"
+        role = f"plane{plane}-link{link_idx}"
         return role, link_color_for_role(role)
 
 
@@ -261,10 +272,9 @@ def sar_endpoint(src, dst, host):
 
 
 def host_link_index(sar):
-    """Map SAR endpoint to link0-3: p00-sar00=0, p00-sar01=1, p01-sar00=2, p01-sar01=3."""
-    plane_off = 0 if plane_key(sar) == "p00" else 2
-    sar_off = 0 if sar.endswith("sar00") else 1
-    return plane_off + sar_off
+    """Map router endpoint to link0-3, ordered plane-major then pair."""
+    _dc, plane, pair = ROUTERS.get(sar, (0, 0, 0))
+    return plane * 2 + pair
 
 
 def host_link_role(src, dst):
@@ -286,9 +296,12 @@ def load_router_interfaces(config_dir=None):
     if not os.path.isdir(config_dir):
         return by_router
     for fn in sorted(os.listdir(config_dir)):
-        if not fn.endswith(".cfg") or "xrd-rr" in fn:
+        if not fn.endswith(".cfg"):
             continue
         hostname = fn[:-4]
+        # Skips route reflectors and non-device configs (nso.cfg, sid-lists.cfg).
+        if hostname not in ROUTERS:
+            continue
         ifname = None
         by_router[hostname] = {}
         with open(os.path.join(config_dir, fn)) as fh:
@@ -313,45 +326,6 @@ def telemetry_router(src, dst, category):
     return src
 
 
-def host_description_key(host):
-    """Primary IOS-XR description prefix for a topology host (no -lN suffix)."""
-    if host.endswith("-trn"):
-        base = host[:-4]
-    elif host.endswith("-inf"):
-        base = host[:-4]
-    else:
-        return host
-    m = re.match(r"dc(\d+)-(.*)", base)
-    if not m:
-        return base
-    dc_num, rest = m.group(1), m.group(2)
-    if dc_num in ("0", "00"):
-        return f"dc00-{rest}"
-    if dc_num in ("1", "01"):
-        return f"dc01-{rest}"
-    return base
-
-
-def host_description_candidates(host):
-    """Description prefixes seen in IOS-XR (dc1 vs dc01 on sar01, etc.)."""
-    keys = []
-    primary = host_description_key(host)
-    keys.append(primary)
-    if primary.startswith("dc01-"):
-        keys.append("dc1-" + primary[5:])
-    if primary.startswith("dc00-"):
-        rest = primary[5:]
-        if host.startswith("dc0-") and not host.startswith("dc00"):
-            keys.append(f"dc0-{rest}")
-    seen = set()
-    ordered = []
-    for key in keys:
-        if key not in seen:
-            seen.add(key)
-            ordered.append(key)
-    return ordered
-
-
 def resolve_link_ifname(router, peer, link_role, category, router_ifs):
     """OpenConfig interface name on router for a topology link row."""
     if not link_role or not router:
@@ -365,13 +339,13 @@ def resolve_link_ifname(router, peer, link_role, category, router_ifs):
             if needle in desc:
                 return ifname
         return ""
+    # Host access links are described as "<host>-l0"/"-l1", where the suffix is
+    # the router's pair_index within the plane.
     host = peer if peer in HOST_LINK_HOSTS else router
-    suffix = "l0" if router.endswith("sar00") else "l1"
-    for key in host_description_candidates(host):
-        desc_key = f"{key}-{suffix}"
-        for ifname, desc in router_ifs.get(router, {}).items():
-            if desc == desc_key:
-                return ifname
+    desc_key = f"{host}-l{ROUTERS.get(router, (0, 0, 0))[2]}"
+    for ifname, desc in router_ifs.get(router, {}).items():
+        if desc == desc_key:
+            return ifname
     return ""
 
 
@@ -525,20 +499,21 @@ NODE_COLOR_MATCHES = [
 
 LINK_COLOR_MATCHES = build_link_color_matches()
 
-# Preset node positions: diagonal SAR pairs, DC1 left / DC2 right, hosts on flanks.
+# Preset node positions: diagonal router pairs, DC-1 left / DC-2 right,
+# hosts on the flanks.
 NODE_POSITIONS = {
-    "dc00-host00-trn": {"x": 50,  "y": 120},
-    "dc00-host01-inf": {"x": 50,  "y": 240},
-    "dc00-p00-sar00":  {"x": 200, "y": 30},
-    "dc00-p00-sar01":  {"x": 280, "y": 100},
-    "dc00-p01-sar00":  {"x": 200, "y": 270},
-    "dc00-p01-sar01":  {"x": 280, "y": 340},
-    "dc01-p00-sar00":  {"x": 550, "y": 30},
-    "dc01-p00-sar01":  {"x": 630, "y": 100},
-    "dc01-p01-sar00":  {"x": 550, "y": 270},
-    "dc01-p01-sar01":  {"x": 630, "y": 340},
-    "dc01-host00-trn": {"x": 760, "y": 120},
-    "dc01-host01-inf": {"x": 760, "y": 240},
+    "dc01-trn": {"x": 50,  "y": 120},
+    "dc01-inf": {"x": 50,  "y": 240},
+    "r01":      {"x": 200, "y": 30},
+    "r02":      {"x": 280, "y": 100},
+    "r03":      {"x": 200, "y": 270},
+    "r04":      {"x": 280, "y": 340},
+    "r05":      {"x": 550, "y": 30},
+    "r06":      {"x": 630, "y": 100},
+    "r07":      {"x": 550, "y": 270},
+    "r08":      {"x": 630, "y": 340},
+    "dc02-trn": {"x": 760, "y": 120},
+    "dc02-inf": {"x": 760, "y": 240},
 }
 
 # Floating text labels (absolute layout positions over the graph).
@@ -1093,7 +1068,8 @@ def emit_demo_dashboard(base_rows, title="Scale Across Topology (Demo)"):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--topo", default="topology.clab.yaml")
+    ap.add_argument("--topo", default=os.path.join(_REPO_ROOT, "topology.clab.yaml"),
+                    help="containerlab topology (default: repo root topology.clab.yaml)")
     ap.add_argument("--expand", action="store_true",
                     help="draw every physical link separately (default: collapsed bundles)")
     ap.add_argument("--include-rr", action="store_true",
