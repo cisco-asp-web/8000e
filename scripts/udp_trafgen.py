@@ -58,7 +58,7 @@ PROFILES = {
         "burst": "60,5,45,5",
     },
     "inference": {
-        "size": 128, "pps": 40, "dport": 5002,
+        "size": 128, "pps": 160, "dport": 5002,
         "src_count": 4, "dst_count": 256, "pattern": "mesh",
         "burst": "",
     },

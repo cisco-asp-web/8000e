@@ -548,13 +548,19 @@ GLOBAL_TIME_INPUT = {
 # guaranteed, so the delta is computed explicitly from latest() instead.
 # Shut interfaces report out_octets=0 forever, so peak_octets>0 drops them without
 # needing a per-router list of configured ports.
-LINK_TRAFFIC_SPL = """
+# Only scale-across fabric links belong here: host access links carry the
+# offered load rather than the fabric's response to it, and RR uplinks carry
+# control plane only. The panel is about how SRv6-TE spreads load across the
+# fabric. Excluded names are derived from the configs by
+# non_fabric_interfaces() rather than hardcoded, so re-cabling keeps the filter
+# correct.
+LINK_TRAFFIC_SPL_TEMPLATE = """
 | mstats latest(_value) AS octets
   WHERE index=mdt_metrics
     metric_name="openconfig-interfaces:interfaces/interface.state/counters/out_octets"
     source="$router$"
   span=30s BY name
-| where match(name, "^EightHundredGigE")
+| where match(name, "^EightHundredGigE"){exclude}
 | eventstats max(octets) AS peak_octets BY name
 | where peak_octets > 0
 | sort 0 name, _time
@@ -564,6 +570,37 @@ LINK_TRAFFIC_SPL = """
                round((octets-prev_octets)*8/(secs*1000000), 3))
 | timechart span=30s limit=0 avg(mbps) BY name
 """.strip()
+
+
+def non_fabric_interfaces(router_ifs=None):
+    """Interface names on any router that are not scale-across fabric links.
+
+    Fabric links are described "to <peer> link<N>". The two exceptions are host
+    access links, "<host>-l<pair_index>" (see resolve_link_ifname), and the
+    route-reflector uplinks, "to <rr>" with no link suffix.
+    """
+    router_ifs = router_ifs if router_ifs is not None else load_router_interfaces()
+    names = set()
+    for ifaces in router_ifs.values():
+        for ifname, desc in ifaces.items():
+            host = re.match(r"(.+)-l\d+$", desc)
+            if host and host.group(1) in HOST_LINK_HOSTS:
+                names.add(ifname)
+                continue
+            rr = re.match(r"to (\S+)$", desc)
+            if rr and rr.group(1) in ROUTE_REFLECTORS:
+                names.add(ifname)
+    return sorted(names)
+
+
+def link_traffic_spl(router_ifs=None):
+    """Traffic-panel SPL with everything but fabric links filtered out."""
+    excluded = non_fabric_interfaces(router_ifs)
+    exclude = ""
+    if excluded:
+        exclude = ('\n    AND NOT match(name, "^(' + "|".join(excluded) + ')$")')
+    return LINK_TRAFFIC_SPL_TEMPLATE.format(exclude=exclude)
+
 
 # A node click emits the node id under row.source.value.
 LINK_TRAFFIC_EVENT_HANDLERS = [
@@ -707,7 +744,7 @@ def _link_traffic_data_source():
     return {
         "name": "link_traffic",
         "options": {
-            "query": LINK_TRAFFIC_SPL,
+            "query": link_traffic_spl(),
             "queryParameters": {
                 "earliest": "$global_time.earliest$",
                 "latest": "$global_time.latest$",

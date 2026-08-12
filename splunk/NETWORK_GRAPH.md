@@ -210,6 +210,32 @@ The trailing index is `plane * 2 + pair`, derived from the `ROUTERS` table in
 Edit colors in the dashboard JSON under `linkColorsEditorConfig`, or set defaults
 in `HOST_LINK_COLOR_DEFAULTS` in `topo_to_spl.py`.
 
+## Traffic panel: which interfaces appear
+
+Clicking a node charts `out_octets` for that router, one series per interface.
+Two filters narrow it to the fabric:
+
+| Filter | Drops |
+|--------|-------|
+| `peak_octets > 0` | Configured but shut ports (they report 0 forever) |
+| `NOT match(name, ...)` | Everything that is not a fabric link — currently `.../16`, `.../17` (host access) and `.../32` (RR uplink) |
+
+Only scale-across fabric links are charted. Host access links carry the offered
+load rather than the fabric's response to it, and RR uplinks carry control
+plane only; neither says anything about how SRv6-TE spread the traffic.
+
+The excluded names are derived at generation time by `non_fabric_interfaces()`
+in `topo_to_spl.py`, which classifies by interface description:
+
+| Description | Kind |
+|-------------|------|
+| `to <peer> link<N>` | fabric — charted |
+| `<host>-l<N>` | host access — excluded |
+| `to <rr>` | route reflector — excluded |
+
+So re-cabling keeps the filter correct; just regenerate. To chart everything
+again, drop the `AND NOT match(...)` line from `LINK_TRAFFIC_SPL_TEMPLATE`.
+
 ## Regenerate after topology changes
 
 ```bash

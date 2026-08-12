@@ -24,7 +24,7 @@ fabric (BGP / SRv6 policies) converges, then flow — no action needed.
 | profile   | payload | aggregate pps | dport | shape | flows |
 |-----------|---------|---------------|-------|-------|-------|
 | training  | 1200 B  | 1280 (~13 Mbps while on) | 5001 | bursty `60,5,45,5` | 4×256 = 1024 |
-| inference | 128 B   | 40 (~0.06 Mbps)          | 5002 | continuous         | 4×256 = 1024 |
+| inference | 128 B   | 160 (~0.23 Mbps)         | 5002 | continuous         | 4×256 = 1024 |
 
 `--pps` is the **aggregate** rate across all flows, not per flow; the
 generator rotates through the flow list one packet at a time. Training's
