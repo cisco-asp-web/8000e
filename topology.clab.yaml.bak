@@ -1,0 +1,301 @@
+name: scale-across
+prefix: ""
+
+mgmt:
+  # network: mgt-clab
+  # ipv4-subnet: 172.20.21.0/24
+  network: mgmt_intf2
+  bridge: mgmt_bridge2
+  ipv4-subnet: 198.18.204.0/24
+  ipv4-gw: 198.18.204.1
+
+topology:
+
+  kinds:
+    linux:
+      image: 8223-64ef-m:26.2.1
+
+  nodes:
+  # r01-r04 = DC1, r05-r08 = DC2. Within each DC the first pair is plane 0 and
+  # the second is plane 1: r01/r02 and r05/r06 on plane 0, r03/r04 and r07/r08
+  # on plane 1. mgmt addressing is sequential, r01 = .32 through r08 = .39.
+    r01:
+      kind: linux
+      mgmt-ipv4: 198.18.204.32
+      binds: [config/r01.cfg:/startup.cfg:ro]
+
+    r02:
+      kind: linux
+      mgmt-ipv4: 198.18.204.33
+      binds: [config/r02.cfg:/startup.cfg:ro]
+
+    r03:
+      kind: linux
+      mgmt-ipv4: 198.18.204.34
+      binds: [config/r03.cfg:/startup.cfg:ro]
+
+    r04:
+      kind: linux
+      mgmt-ipv4: 198.18.204.35
+      binds: [config/r04.cfg:/startup.cfg:ro]
+
+    r05:
+      kind: linux
+      mgmt-ipv4: 198.18.204.36
+      binds: [config/r05.cfg:/startup.cfg:ro]
+
+    r06:
+      kind: linux
+      mgmt-ipv4: 198.18.204.37
+      binds: [config/r06.cfg:/startup.cfg:ro]
+
+    r07:
+      kind: linux
+      mgmt-ipv4: 198.18.204.38
+      binds: [config/r07.cfg:/startup.cfg:ro]
+
+    r08:
+      kind: linux
+      mgmt-ipv4: 198.18.204.39
+      binds: [config/r08.cfg:/startup.cfg:ro]
+
+    rr01:
+      kind: cisco_xrd
+      image: ios-xr/xrd-control-plane:26.2.1
+      mgmt-ipv4: 198.18.204.40
+      startup-config: config/rr01.cfg
+
+    rr02:
+      kind: cisco_xrd
+      image: ios-xr/xrd-control-plane:26.2.1
+      mgmt-ipv4: 198.18.204.41
+      startup-config: config/rr02.cfg
+
+    dc01-trn:
+      kind: linux
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:1.0
+      mgmt-ipv4: 198.18.204.64
+      binds: [scripts:/scripts:ro]
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
+        - "ip -6 addr add 2001:db8:a000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::65/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::69/127 dev eth2 nodad"
+        - "ip -6 addr add 2001:db8:1:2::65/127 dev eth3 nodad"
+        - "ip -6 addr add 2001:db8:1:2::69/127 dev eth4 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::64 dev eth2 nexthop via 2001:db8:1:2::64 dev eth3 nexthop via 2001:db8:1:2::64 dev eth4"
+        - "ip -6 route add 2001:db8:b000::/48 nexthop via 2001:db8:1:1::64 dev eth1 nexthop via 2001:db8:1:1::68 dev eth2 nexthop via 2001:db8:1:2::64 dev eth3 nexthop via 2001:db8:1:2::68 dev eth4"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:a000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:a000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:a000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:a000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:a000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:a000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:a000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+        # training all-to-all: a000[1..8] -> b000[1..8] full UDP mesh
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:a000:: --dst-prefix 2001:db8:b000:: >/var/log/trafgen.log 2>&1 &'"
+
+    dc01-inf:
+      kind: linux
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:1.0
+      mgmt-ipv4: 198.18.204.65
+      binds: [scripts:/scripts:ro]
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
+        - "ip -6 addr add 2001:db8:c000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::67/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::71/127 dev eth2 nodad"
+        - "ip -6 addr add 2001:db8:1:2::67/127 dev eth3 nodad"
+        - "ip -6 addr add 2001:db8:1:2::71/127 dev eth4 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2 nexthop via 2001:db8:1:2::66 dev eth3 nexthop via 2001:db8:1:2::70 dev eth4"
+        - "ip -6 route add 2001:db8:d000::/48 nexthop via 2001:db8:1:1::66 dev eth1 nexthop via 2001:db8:1:1::70 dev eth2 nexthop via 2001:db8:1:2::66 dev eth3 nexthop via 2001:db8:1:2::70 dev eth4"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:c000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:c000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:c000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:c000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:c000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:c000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:c000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+        # inference: c000[1..8] -> d000[1..8] paired (::i -> ::i) smaller UDP streams
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:c000:: --dst-prefix 2001:db8:d000:: >/var/log/trafgen.log 2>&1 &'"
+
+    dc02-trn:
+      kind: linux
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:1.0
+      mgmt-ipv4: 198.18.204.66
+      binds: [scripts:/scripts:ro]
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
+        - "ip -6 addr add 2001:db8:b000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::73/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::77/127 dev eth2 nodad"
+        - "ip -6 addr add 2001:db8:1:2::73/127 dev eth3 nodad"
+        - "ip -6 addr add 2001:db8:1:2::77/127 dev eth4 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2 nexthop via 2001:db8:1:2::72 dev eth3 nexthop via 2001:db8:1:2::76 dev eth4"
+        - "ip -6 route add 2001:db8:a000::/48 nexthop via 2001:db8:1:1::72 dev eth1 nexthop via 2001:db8:1:1::76 dev eth2 nexthop via 2001:db8:1:2::72 dev eth3 nexthop via 2001:db8:1:2::76 dev eth4"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:b000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:b000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:b000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:b000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:b000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:b000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:b000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+        # training all-to-all: b000[1..8] -> a000[1..8] full UDP mesh
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:b000:: --dst-prefix 2001:db8:a000:: >/var/log/trafgen.log 2>&1 &'"
+
+    dc02-inf:
+      kind: linux
+      #image: alpine-srv6-scapy:1.0
+      image: bmcdougall/alpine-srv6-scapy:1.0
+      mgmt-ipv4: 198.18.204.67
+      binds: [scripts:/scripts:ro]
+      exec:
+        - "sysctl -w net.ipv6.conf.all.forwarding=1"
+        - "sysctl -w net.ipv6.fib_multipath_hash_policy=1"
+        - "ip -6 addr add 2001:db8:d000::1/128 dev lo nodad"
+        - "ip -6 addr add 2001:db8:1:1::75/127 dev eth1 nodad"
+        - "ip -6 addr add 2001:db8:1:1::79/127 dev eth2 nodad"
+        - "ip -6 addr add 2001:db8:1:2::75/127 dev eth3 nodad"
+        - "ip -6 addr add 2001:db8:1:2::79/127 dev eth4 nodad"
+        - "ip -6 route add fc00:0000::/32 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2 nexthop via 2001:db8:1:2::74 dev eth3 nexthop via 2001:db8:1:2::78 dev eth4"
+        - "ip -6 route add 2001:db8:c000::/48 nexthop via 2001:db8:1:1::74 dev eth1 nexthop via 2001:db8:1:1::78 dev eth2 nexthop via 2001:db8:1:2::74 dev eth3 nexthop via 2001:db8:1:2::78 dev eth4"
+        - "ip link add lo2 type dummy"
+        - "ip addr add 2001:db8:d000::2/128 dev lo2 nodad"
+        - "ip link set lo2 up"
+        - "ip link add lo3 type dummy"
+        - "ip addr add 2001:db8:d000::3/128 dev lo3 nodad"
+        - "ip link set lo3 up"
+        - "ip link add lo4 type dummy"
+        - "ip addr add 2001:db8:d000::4/128 dev lo4 nodad"
+        - "ip link set lo4 up"
+        - "ip link add lo5 type dummy"
+        - "ip addr add 2001:db8:d000::5/128 dev lo5 nodad"
+        - "ip link set lo5 up"
+        - "ip link add lo6 type dummy"
+        - "ip addr add 2001:db8:d000::6/128 dev lo6 nodad"
+        - "ip link set lo6 up"
+        - "ip link add lo7 type dummy"
+        - "ip addr add 2001:db8:d000::7/128 dev lo7 nodad"
+        - "ip link set lo7 up"
+        - "ip link add lo8 type dummy"
+        - "ip addr add 2001:db8:d000::8/128 dev lo8 nodad"
+        - "ip link set lo8 up"
+        # inference: d000[1..8] -> c000[1..8] paired (::i -> ::i) smaller UDP streams
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:d000:: --dst-prefix 2001:db8:c000:: >/var/log/trafgen.log 2>&1 &'"
+
+  links:
+  # plane 0
+    - endpoints: ["r01:EH0_0_0_0", "r05:EH0_0_0_0"]
+    - endpoints: ["r01:EH0_0_0_1", "r05:EH0_0_0_1"]
+    - endpoints: ["r01:EH0_0_0_2", "r05:EH0_0_0_2"]
+    - endpoints: ["r01:EH0_0_0_3", "r05:EH0_0_0_3"]
+
+    - endpoints: ["r02:EH0_0_0_0", "r06:EH0_0_0_0"]
+    - endpoints: ["r02:EH0_0_0_1", "r06:EH0_0_0_1"]
+    - endpoints: ["r02:EH0_0_0_2", "r06:EH0_0_0_2"]
+    - endpoints: ["r02:EH0_0_0_3", "r06:EH0_0_0_3"]
+
+    - endpoints: ["r01:EH0_0_0_4", "r06:EH0_0_0_4"]
+    - endpoints: ["r01:EH0_0_0_5", "r06:EH0_0_0_5"]
+    - endpoints: ["r01:EH0_0_0_6", "r06:EH0_0_0_6"]
+    - endpoints: ["r01:EH0_0_0_7", "r06:EH0_0_0_7"]
+
+    - endpoints: ["r02:EH0_0_0_4", "r05:EH0_0_0_4"]
+    - endpoints: ["r02:EH0_0_0_5", "r05:EH0_0_0_5"]
+    - endpoints: ["r02:EH0_0_0_6", "r05:EH0_0_0_6"]
+    - endpoints: ["r02:EH0_0_0_7", "r05:EH0_0_0_7"]
+
+  # plane 0 hosts
+    - endpoints: ["dc01-trn:eth1", "r01:EH0_0_0_16"]
+    - endpoints: ["dc01-trn:eth2", "r02:EH0_0_0_16"]
+    - endpoints: ["dc01-inf:eth1", "r01:EH0_0_0_17"]
+    - endpoints: ["dc01-inf:eth2", "r02:EH0_0_0_17"]
+    - endpoints: ["dc02-trn:eth1", "r05:EH0_0_0_16"]
+    - endpoints: ["dc02-trn:eth2", "r06:EH0_0_0_16"]
+    - endpoints: ["dc02-inf:eth1", "r05:EH0_0_0_17"]
+    - endpoints: ["dc02-inf:eth2", "r06:EH0_0_0_17"]
+
+  # plane 0 RR
+    - endpoints: ["r01:EH0_0_0_32", "rr01:Gi0-0-0-0"]
+
+  # plane 1
+    - endpoints: ["r03:EH0_0_0_0", "r07:EH0_0_0_0"]
+    - endpoints: ["r03:EH0_0_0_1", "r07:EH0_0_0_1"]
+    - endpoints: ["r03:EH0_0_0_2", "r07:EH0_0_0_2"]
+    - endpoints: ["r03:EH0_0_0_3", "r07:EH0_0_0_3"]
+
+    - endpoints: ["r04:EH0_0_0_0", "r08:EH0_0_0_0"]
+    - endpoints: ["r04:EH0_0_0_1", "r08:EH0_0_0_1"]
+    - endpoints: ["r04:EH0_0_0_2", "r08:EH0_0_0_2"]
+    - endpoints: ["r04:EH0_0_0_3", "r08:EH0_0_0_3"]
+
+    - endpoints: ["r03:EH0_0_0_4", "r08:EH0_0_0_4"]
+    - endpoints: ["r03:EH0_0_0_5", "r08:EH0_0_0_5"]
+    - endpoints: ["r03:EH0_0_0_6", "r08:EH0_0_0_6"]
+    - endpoints: ["r03:EH0_0_0_7", "r08:EH0_0_0_7"]
+
+    - endpoints: ["r04:EH0_0_0_4", "r07:EH0_0_0_4"]
+    - endpoints: ["r04:EH0_0_0_5", "r07:EH0_0_0_5"]
+    - endpoints: ["r04:EH0_0_0_6", "r07:EH0_0_0_6"]
+    - endpoints: ["r04:EH0_0_0_7", "r07:EH0_0_0_7"]
+
+  # plane 1 hosts
+    - endpoints: ["dc01-trn:eth3", "r03:EH0_0_0_16"]
+    - endpoints: ["dc01-trn:eth4", "r04:EH0_0_0_16"]
+    - endpoints: ["dc01-inf:eth3", "r03:EH0_0_0_17"]
+    - endpoints: ["dc01-inf:eth4", "r04:EH0_0_0_17"]
+    - endpoints: ["dc02-trn:eth3", "r07:EH0_0_0_16"]
+    - endpoints: ["dc02-trn:eth4", "r08:EH0_0_0_16"]
+    - endpoints: ["dc02-inf:eth3", "r07:EH0_0_0_17"]
+    - endpoints: ["dc02-inf:eth4", "r08:EH0_0_0_17"]
+
+  # plane 1 RR
+    - endpoints: ["r03:EH0_0_0_32", "rr02:Gi0-0-0-0"]
