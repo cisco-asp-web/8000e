@@ -108,7 +108,7 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:a000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # training collective: a000[1..4] -> b000[1..256], bursty 60/5/45/5
+        # training collective: a000[1..4] -> b000[1..256], bursty 150s on / 30s off
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:a000:: --dst-prefix 2001:db8:b000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc01-inf:
@@ -188,7 +188,7 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:b000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # training collective: b000[1..4] -> a000[1..256], bursty 60/5/45/5
+        # training collective: b000[1..4] -> a000[1..256], bursty 150s on / 30s off
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:b000:: --dst-prefix 2001:db8:a000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc02-inf:

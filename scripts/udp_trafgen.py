@@ -55,7 +55,11 @@ PROFILES = {
     "training": {
         "size": 1200, "pps": 1280, "dport": 5001,
         "src_count": 4, "dst_count": 256, "pattern": "mesh",
-        "burst": "60,5,45,5",
+        # Aligned to the 30s MDT sample interval: the off-period must cover a
+        # whole telemetry bucket to render as a dip rather than a shallow dent,
+        # and a cycle that is a multiple of 30s keeps it from drifting across
+        # bucket boundaries.
+        "burst": "150,30",
     },
     "inference": {
         "size": 128, "pps": 160, "dport": 5002,
@@ -105,8 +109,9 @@ def parse_args():
                    help="first UDP source port; one port per source address "
                         "(default 20000)")
     p.add_argument("--burst",
-                   help="on/off seconds, alternating and repeating, e.g. "
-                        "'60,5,45,5'. Empty string = run continuously.")
+                   help="on/off seconds, alternating and repeating; any number "
+                        "of segments, e.g. '60,5,45,5'. Empty string = run "
+                        "continuously. Defaults to the profile's schedule.")
     p.add_argument("--duration", type=float, default=0,
                    help="seconds to run, 0 = run forever (default 0)")
     return p.parse_args()

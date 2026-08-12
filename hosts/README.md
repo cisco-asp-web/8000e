@@ -23,13 +23,22 @@ fabric (BGP / SRv6 policies) converges, then flow — no action needed.
 
 | profile   | payload | aggregate pps | dport | shape | flows |
 |-----------|---------|---------------|-------|-------|-------|
-| training  | 1200 B  | 1280 (~13 Mbps while on) | 5001 | bursty `60,5,45,5` | 4×256 = 1024 |
+| training  | 1200 B  | 1280 (~13 Mbps while on) | 5001 | bursty `150,30`    | 4×256 = 1024 |
 | inference | 128 B   | 160 (~0.23 Mbps)         | 5002 | continuous         | 4×256 = 1024 |
 
 `--pps` is the **aggregate** rate across all flows, not per flow; the
 generator rotates through the flow list one packet at a time. Training's
 on/off cycle is what makes it visually distinct from inference on a
 throughput graph.
+
+The burst schedule is tuned to the telemetry, not to real collectives. MDT
+samples at 30s (`sample-interval 30000`) and the Splunk panel uses `span=30s`,
+so an off-period shorter than one bucket only dents the average instead of
+showing a dip, and a cycle that is not a multiple of 30s drifts across bucket
+boundaries. `150,30` gives five buckets at full rate then one at zero, every
+three minutes. Real all-reduce runs orders of magnitude faster than 30s
+counters can resolve; at this timescale the pause reads as a checkpoint or
+validation pass.
 
 Only the 4 source addresses have to exist locally. Destinations are never
 answered, so any address inside the peer's `/48` is fair game — that is what

@@ -1,0 +1,18 @@
+# Python bytecode. scripts/ is bind-mounted into the lab hosts, so importing
+# anything from it (or running the tooling locally) drops __pycache__ here.
+__pycache__/
+*.py[cod]
+
+# Containerlab runtime artifacts, created in the directory you deploy from.
+clab-*/
+.*.clab.yaml.bak
+*.clab.yaml.bak
+
+# macOS
+.DS_Store
+
+# Editor scratch
+*.swp
+*~
+
+# Note: no blanket *.log rule -- config/splunk/debug.log is tracked on purpose.
