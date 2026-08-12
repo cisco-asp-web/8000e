@@ -1,0 +1,341 @@
+{
+    "title": "Scale Across Topology",
+    "description": "Import via Dashboard Studio → Edit → Source code. Viz options map nodeColors/nodeSize from SPL.",
+    "inputs": {},
+    "defaults": {
+        "dataSources": {
+            "ds.search": {
+                "options": {
+                    "queryParameters": {
+                        "earliest": "-24h@h",
+                        "latest": "now"
+                    }
+                }
+            }
+        }
+    },
+    "visualizations": {
+        "viz_label_dc0": {
+            "options": {
+                "backgroundColor": "#212529",
+                "customFontSize": 20,
+                "fontColor": "#FFFFFF",
+                "fontSize": "custom",
+                "markdown": "**DC-1**"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": false,
+            "type": "splunk.markdown"
+        },
+        "viz_label_dc1": {
+            "options": {
+                "backgroundColor": "#212529",
+                "customFontSize": 20,
+                "fontColor": "#FFFFFF",
+                "fontSize": "custom",
+                "markdown": "**DC-2**"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": false,
+            "type": "splunk.markdown"
+        },
+        "viz_label_plane0": {
+            "options": {
+                "backgroundColor": "#212529",
+                "customFontSize": 20,
+                "fontColor": "#FFFFFF",
+                "fontSize": "custom",
+                "markdown": "**Scale Across Plane-1**"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": false,
+            "type": "splunk.markdown"
+        },
+        "viz_label_plane1": {
+            "options": {
+                "backgroundColor": "#212529",
+                "customFontSize": 20,
+                "fontColor": "#FFFFFF",
+                "fontSize": "custom",
+                "markdown": "**Scale Across Plane-2**"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": false,
+            "type": "splunk.markdown"
+        },
+        "viz_topology_graph": {
+            "context": {
+                "linkColorsEditorConfig": [
+                    {
+                        "match": "plane0-link0",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane0-link1",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "plane0-link2",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane0-link3",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane1-link0",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane1-link1",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane1-link2",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "plane1-link3",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "training0-link0",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "training0-link1",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "training0-link2",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "training0-link3",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "inference0-link0",
+                        "value": "#bdbdbc"
+                    },
+                    {
+                        "match": "inference0-link1",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "inference0-link2",
+                        "value": "#bdbdbc"
+                    },
+                    {
+                        "match": "inference0-link3",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "training1-link0",
+                        "value": "#a873dd"
+                    },
+                    {
+                        "match": "training1-link1",
+                        "value": "#a873dd"
+                    },
+                    {
+                        "match": "training1-link2",
+                        "value": "#a873dd"
+                    },
+                    {
+                        "match": "training1-link3",
+                        "value": "#c290f4"
+                    },
+                    {
+                        "match": "inference1-link0",
+                        "value": "#bdbdbc"
+                    },
+                    {
+                        "match": "inference1-link1",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "inference1-link2",
+                        "value": "#7dcff2"
+                    },
+                    {
+                        "match": "inference1-link3",
+                        "value": "#bdbdbc"
+                    }
+                ],
+                "nodeColorsEditorConfig": [
+                    {
+                        "match": "sar_p00",
+                        "value": "#009CEB"
+                    },
+                    {
+                        "match": "sar_p01",
+                        "value": "#4fa484"
+                    },
+                    {
+                        "match": "trn",
+                        "value": "#a873dd"
+                    },
+                    {
+                        "match": "inf",
+                        "value": "#7dcff2"
+                    }
+                ]
+            },
+            "dataSources": {
+                "primary": "ds_topology"
+            },
+            "options": {
+                "backgroundColor": "#212529",
+                "layout": "force",
+                "linkColorValues": "> primary | seriesByName('linkRole')",
+                "linkColors": "> linkColorValues | matchValue(linkColorsEditorConfig)",
+                "linkDistance": 80,
+                "linkStyle": "straight",
+                "linkWidth": "> primary | seriesByName('linkWidths')",
+                "nodeColorValues": "> primary | seriesByName('nodeRole')",
+                "nodeColors": "> nodeColorValues | matchValue(nodeColorsEditorConfig)",
+                "nodeDragPositions": {
+                    "dc0-host01-inf": {
+                        "x": 50,
+                        "y": 240
+                    },
+                    "dc00-host00-trn": {
+                        "x": 50,
+                        "y": 120
+                    },
+                    "dc00-p00-sar00": {
+                        "x": 200,
+                        "y": 30
+                    },
+                    "dc00-p00-sar01": {
+                        "x": 280,
+                        "y": 100
+                    },
+                    "dc00-p01-sar00": {
+                        "x": 200,
+                        "y": 270
+                    },
+                    "dc00-p01-sar01": {
+                        "x": 280,
+                        "y": 340
+                    },
+                    "dc01-p00-sar00": {
+                        "x": 550,
+                        "y": 30
+                    },
+                    "dc01-p00-sar01": {
+                        "x": 630,
+                        "y": 100
+                    },
+                    "dc01-p01-sar00": {
+                        "x": 550,
+                        "y": 270
+                    },
+                    "dc01-p01-sar01": {
+                        "x": 630,
+                        "y": 340
+                    },
+                    "dc1-host00-trn": {
+                        "x": 760,
+                        "y": 120
+                    },
+                    "dc1-host01-inf": {
+                        "x": 760,
+                        "y": 240
+                    }
+                },
+                "nodeHorizontalPadding": 40,
+                "nodeIconColors": "> primary | seriesByName('nodeIconColors')",
+                "nodeIcons": "> primary | seriesByName('nodeIcons')",
+                "nodeSize": "> primary | seriesByName('nodeSize')",
+                "nodeTextFontSize": 12,
+                "nodeTexts": "> primary | seriesByName('nodeTexts')",
+                "nodeVerticalPadding": 20,
+                "showDirection": "none",
+                "showZoomControls": true,
+                "tooltipHeaderField": "> primary | seriesByName('source')"
+            },
+            "showLastUpdated": false,
+            "showProgressBar": false,
+            "title": "Scale Across Topology",
+            "type": "splunk.networkGraph"
+        }
+    },
+    "dataSources": {
+        "ds_topology": {
+            "name": "topology",
+            "options": {
+                "query": "| makeresults\n| eval \n    source=\"dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc00-host00-trn,dc0-host01-inf,dc1-host00-trn,dc1-host01-inf,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar00,dc01-p01-sar01\",\n    target=\",,,,,,,,,,,,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar01,dc01-p00-sar00,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc1-host00-trn,dc1-host00-trn,dc1-host01-inf,dc1-host01-inf,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar01,dc01-p01-sar00,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc1-host00-trn,dc1-host00-trn,dc1-host01-inf,dc1-host01-inf\",\n    nodeTexts=\"r01,r02,r05,r06,r03,r04,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,r05,r06,r05,r06,r03,r04,r03,r04,training,training,inference,inference,r07,r08,r07,r08\",\n    type=\"DC0,DC0,DC1,DC1,DC0,DC0,DC1,DC1,DC0,DC0,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1\",\n    nodeRole=\"sar_p00,sar_p00,sar_p00,sar_p00,sar_p01,sar_p01,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,sar_p00,sar_p00,sar_p00,sar_p00,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01\",\n    nodeColors=\"#009CEB,#009CEB,#009CEB,#009CEB,#4fa484,#4fa484,#4fa484,#4fa484,#af575a,#f8be44,#af575a,#f8be44,#009CEB,#009CEB,#009CEB,#009CEB,#af575a,#af575a,#f8be44,#f8be44,#009CEB,#009CEB,#009CEB,#009CEB,#4fa484,#4fa484,#4fa484,#4fa484,#af575a,#af575a,#f8be44,#f8be44,#4fa484,#4fa484,#4fa484,#4fa484\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#af575a,#af575a,#af575a,#f8be44,#af575a,#af575a,#f8be44,#f8be44,#af575a,#af575a,#f8be44,#f8be44,#af575a,#af575a,#af575a,#f8be44,#af575a,#af575a,#f8be44,#f8be44,#af575a,#af575a,#f8be44,#f8be44\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(linkValues=\"\", null(), tonumber(linkValues)), linkWidths=if(linkWidths=\"\", null(), tonumber(linkWidths))\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths"
+            },
+            "type": "ds.search"
+        }
+    },
+    "layout": {
+        "layoutDefinitions": {
+            "layout_1": {
+                "structure": [
+                    {
+                        "item": "viz_topology_graph",
+                        "position": {
+                            "h": 700,
+                            "w": 1200,
+                            "x": 0,
+                            "y": 0
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_label_dc0",
+                        "position": {
+                            "h": 32,
+                            "w": 60,
+                            "x": 60,
+                            "y": 340
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_label_dc1",
+                        "position": {
+                            "h": 32,
+                            "w": 80,
+                            "x": 1090,
+                            "y": 340
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_label_plane0",
+                        "position": {
+                            "h": 32,
+                            "w": 210,
+                            "x": 520,
+                            "y": 80
+                        },
+                        "type": "block"
+                    },
+                    {
+                        "item": "viz_label_plane1",
+                        "position": {
+                            "h": 32,
+                            "w": 210,
+                            "x": 520,
+                            "y": 420
+                        },
+                        "type": "block"
+                    }
+                ],
+                "type": "absolute"
+            }
+        },
+        "tabs": {
+            "items": [
+                {
+                    "label": "Scale Across Topology",
+                    "layoutId": "layout_1"
+                }
+            ]
+        }
+    }
+}

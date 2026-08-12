@@ -1,28 +1,41 @@
 | makeresults
 | eval 
-    source="dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,p00-xrd-rr,p01-xrd-rr,dc00-host00-trn,dc0-host01-inf,dc1-host00-trn,dc1-host01-inf,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p00-sar00,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc00-p01-sar00",
-    target=",,,,,,,,,,,,,,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar01,dc01-p00-sar00,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc1-host00-trn,dc1-host00-trn,dc1-host01-inf,dc1-host01-inf,p00-xrd-rr,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar01,dc01-p01-sar00,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc1-host00-trn,dc1-host00-trn,dc1-host01-inf,dc1-host01-inf,p01-xrd-rr",
-    nodeTexts="dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,p00-xrd-rr,p01-xrd-rr,dc00-host00-trn,dc0-host01-inf,dc1-host00-trn,dc1-host01-inf,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p00-sar00,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-host00-trn,dc00-host00-trn,dc0-host01-inf,dc0-host01-inf,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc00-p01-sar00",
-    type="DC0,DC0,DC1,DC1,DC0,DC0,DC1,DC1,DC0,DC0,DC0,DC0,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1,DC0",
-    nodeColors="#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#8E44AD,#8E44AD,#6CC04A,#F2A900,#6CC04A,#F2A900,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#6CC04A,#6CC04A,#F2A900,#F2A900,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#6CC04A,#6CC04A,#F2A900,#F2A900,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#00BCEB",
-    nodeIcons="servers,servers,servers,servers,servers,servers,servers,servers,servers,servers,portrait,portrait,portrait,portrait,servers,servers,servers,servers,portrait,portrait,portrait,portrait,servers,servers,servers,servers,servers,servers,servers,servers,servers,portrait,portrait,portrait,portrait,servers,servers,servers,servers,servers",
-    nodeIconColors="#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF",
-    nodeValues="8,8,8,8,8,8,8,8,6,6,4,4,4,4,8,8,8,8,4,4,4,4,8,8,8,8,8,8,8,8,8,4,4,4,4,8,8,8,8,8",
-    linkColors=",,,,,,,,,,,,,,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#8E44AD,#00BCEB,#00BCEB,#00BCEB,#00BCEB,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#9E9E9E,#8E44AD",
-    linkValues=",,,,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1,1",
-    linkWidths=",,,,,,,,,,,,,,6,6,6,6,2,2,2,2,2,2,2,2,2,6,6,6,6,2,2,2,2,2,2,2,2,2",
-    row_index=mvrange(0,40)
+    source="dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc00-host00-trn,dc00-host01-inf,dc01-host00-trn,dc01-host01-inf,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-host00-trn,dc00-host00-trn,dc00-host01-inf,dc00-host01-inf,dc01-host00-trn,dc01-host00-trn,dc01-host01-inf,dc01-host01-inf,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-host00-trn,dc00-host00-trn,dc00-host01-inf,dc00-host01-inf,dc01-host00-trn,dc01-host00-trn,dc01-host01-inf,dc01-host01-inf",
+    target=",,,,,,,,,,,,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar01,dc01-p00-sar00,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar01,dc01-p01-sar00,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar00,dc01-p01-sar01",
+    nodeTexts="r01,r02,r05,r06,r03,r04,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference",
+    type="DC0,DC0,DC1,DC1,DC0,DC0,DC1,DC1,DC0,DC0,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC0,DC1,DC1,DC1,DC1",
+    nodeRole="sar_p00,sar_p00,sar_p00,sar_p00,sar_p01,sar_p01,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf",
+    nodeColors="#009CEB,#009CEB,#009CEB,#009CEB,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2",
+    nodeIcons="networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers",
+    nodeIconColors="#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF",
+    nodeValues="10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5",
+    nodeSize="32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30",
+    linkRole=",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3",
+    linkColors=",,,,,,,,,,,,#c290f4,#7dcff2,#c290f4,#c290f4,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#a873dd,#bdbdbc,#7dcff2,#c290f4,#c290f4,#c290f4,#7dcff2,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#c290f4,#7dcff2,#bdbdbc",
+    linkValues=",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1",
+    linkWidths=",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5",
+    linkRouter=",,,,,,,,,,,,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc00-p00-sar00,dc00-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc01-p00-sar00,dc01-p00-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc00-p01-sar00,dc00-p01-sar01,dc01-p01-sar00,dc01-p01-sar01,dc01-p01-sar00,dc01-p01-sar01",
+    linkIfname=",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17",
+    row_index=mvrange(0,36)
 | mvexpand row_index
 | eval 
     source=mvindex(split(source,","),row_index),
     target=mvindex(split(target,","),row_index),
     nodeTexts=mvindex(split(nodeTexts,","),row_index),
     type=mvindex(split(type,","),row_index),
+    nodeRole=mvindex(split(nodeRole,","),row_index),
     nodeColors=mvindex(split(nodeColors,","),row_index),
     nodeIcons=mvindex(split(nodeIcons,","),row_index),
     nodeIconColors=mvindex(split(nodeIconColors,","),row_index),
     nodeValues=mvindex(split(nodeValues,","),row_index),
+    nodeSize=mvindex(split(nodeSize,","),row_index),
+    linkRole=mvindex(split(linkRole,","),row_index),
     linkColors=mvindex(split(linkColors,","),row_index),
     linkValues=mvindex(split(linkValues,","),row_index),
-    linkWidths=mvindex(split(linkWidths,","),row_index)
-| table source, target, nodeTexts, type, nodeColors, nodeIcons, nodeIconColors, nodeValues, linkColors, linkValues, linkWidths
+    linkWidths=mvindex(split(linkWidths,","),row_index),
+    linkRouter=mvindex(split(linkRouter,","),row_index),
+    linkIfname=mvindex(split(linkIfname,","),row_index)
+| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)
+| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))
+| eval target=if(len(target)==0, null(), target)
+| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname
