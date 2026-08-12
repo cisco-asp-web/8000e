@@ -2,407 +2,407 @@
   "title": "Scale Across Topology",
   "description": "Import via Dashboard Studio → Edit → Source code. Viz options map nodeColors/nodeSize from SPL.",
   "inputs": {
-    "input_global_time": {
-      "options": {
-        "defaultValue": "-60m,now",
-        "token": "global_time"
-      },
-      "title": "Time range",
-      "type": "input.timerange"
-    }
+      "input_global_time": {
+          "options": {
+              "defaultValue": "-60m,now",
+              "token": "global_time"
+          },
+          "title": "Time range",
+          "type": "input.timerange"
+      }
   },
   "defaults": {
-    "tokens": {
-      "default": {
-        "router": {
-          "value": "r01"
-        }
-      }
-    },
-    "dataSources": {
-      "ds.search": {
-        "options": {
-          "queryParameters": {
-            "earliest": "-24h@h",
-            "latest": "now"
+      "dataSources": {
+          "ds.search": {
+              "options": {
+                  "queryParameters": {
+                      "earliest": "-24h@h",
+                      "latest": "now"
+                  }
+              }
           }
-        }
+      },
+      "tokens": {
+          "default": {
+              "router": {
+                  "value": "r01"
+              }
+          }
       }
-    }
   },
   "visualizations": {
-    "viz_label_dc0": {
-      "options": {
-        "backgroundColor": "#212529",
-        "customFontSize": 20,
-        "fontColor": "#FFFFFF",
-        "fontSize": "custom",
-        "markdown": "**DC-1**"
-      },
-      "showLastUpdated": false,
-      "showProgressBar": false,
-      "type": "splunk.markdown"
-    },
-    "viz_label_dc1": {
-      "options": {
-        "backgroundColor": "#212529",
-        "customFontSize": 20,
-        "fontColor": "#FFFFFF",
-        "fontSize": "custom",
-        "markdown": "**DC-2**"
-      },
-      "showLastUpdated": false,
-      "showProgressBar": false,
-      "type": "splunk.markdown"
-    },
-    "viz_label_plane0": {
-      "options": {
-        "backgroundColor": "#212529",
-        "customFontSize": 20,
-        "fontColor": "#FFFFFF",
-        "fontSize": "custom",
-        "markdown": "**Scale Across Plane-1**"
-      },
-      "showLastUpdated": false,
-      "showProgressBar": false,
-      "type": "splunk.markdown"
-    },
-    "viz_label_plane1": {
-      "options": {
-        "backgroundColor": "#212529",
-        "customFontSize": 20,
-        "fontColor": "#FFFFFF",
-        "fontSize": "custom",
-        "markdown": "**Scale Across Plane-2**"
-      },
-      "showLastUpdated": false,
-      "showProgressBar": false,
-      "type": "splunk.markdown"
-    },
-    "viz_topology_graph": {
-      "context": {
-        "linkColorsEditorConfig": [
-          {
-            "match": "plane0-link0",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane0-link1",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "plane0-link2",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane0-link3",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link0",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link1",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link2",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link3",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "training0-link0",
-            "value": "#c290f4"
-          },
-          {
-            "match": "training0-link1",
-            "value": "#c290f4"
-          },
-          {
-            "match": "training0-link2",
-            "value": "#c290f4"
-          },
-          {
-            "match": "training0-link3",
-            "value": "#c290f4"
-          },
-          {
-            "match": "training1-link0",
-            "value": "#a873dd"
-          },
-          {
-            "match": "training1-link1",
-            "value": "#a873dd"
-          },
-          {
-            "match": "training1-link2",
-            "value": "#a873dd"
-          },
-          {
-            "match": "training1-link3",
-            "value": "#c290f4"
-          },
-          {
-            "match": "inference0-link0",
-            "value": "#bdbdbc"
-          },
-          {
-            "match": "inference0-link1",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "inference0-link2",
-            "value": "#bdbdbc"
-          },
-          {
-            "match": "inference0-link3",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "inference1-link0",
-            "value": "#bdbdbc"
-          },
-          {
-            "match": "inference1-link1",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "inference1-link2",
-            "value": "#7dcff2"
-          },
-          {
-            "match": "inference1-link3",
-            "value": "#bdbdbc"
-          }
-        ],
-        "nodeColorsEditorConfig": [
-          {
-            "match": "sar_p00",
-            "value": "#009CEB"
-          },
-          {
-            "match": "sar_p01",
-            "value": "#4fa484"
-          },
-          {
-            "match": "trn",
-            "value": "#a873dd"
-          },
-          {
-            "match": "inf",
-            "value": "#7dcff2"
-          }
-        ]
-      },
-      "dataSources": {
-        "primary": "ds_topology"
-      },
-      "eventHandlers": [
-        {
-          "type": "drilldown.setToken",
+      "viz_label_dc0": {
           "options": {
-            "tokens": [
+              "backgroundColor": "#212529",
+              "customFontSize": 20,
+              "fontColor": "#FFFFFF",
+              "fontSize": "custom",
+              "markdown": "**DC-1**"
+          },
+          "showLastUpdated": false,
+          "showProgressBar": false,
+          "type": "splunk.markdown"
+      },
+      "viz_label_dc1": {
+          "options": {
+              "backgroundColor": "#212529",
+              "customFontSize": 20,
+              "fontColor": "#FFFFFF",
+              "fontSize": "custom",
+              "markdown": "**DC-2**"
+          },
+          "showLastUpdated": false,
+          "showProgressBar": false,
+          "type": "splunk.markdown"
+      },
+      "viz_label_plane0": {
+          "options": {
+              "backgroundColor": "#212529",
+              "customFontSize": 20,
+              "fontColor": "#FFFFFF",
+              "fontSize": "custom",
+              "markdown": "**Scale Across Plane-1**"
+          },
+          "showLastUpdated": false,
+          "showProgressBar": false,
+          "type": "splunk.markdown"
+      },
+      "viz_label_plane1": {
+          "options": {
+              "backgroundColor": "#212529",
+              "customFontSize": 20,
+              "fontColor": "#FFFFFF",
+              "fontSize": "custom",
+              "markdown": "**Scale Across Plane-2**"
+          },
+          "showLastUpdated": false,
+          "showProgressBar": false,
+          "type": "splunk.markdown"
+      },
+      "viz_link_traffic": {
+          "dataSources": {
+              "primary": "ds_link_traffic"
+          },
+          "options": {
+              "backgroundColor": "#212529",
+              "legendDisplay": "right",
+              "yAxisTitleText": "Mbps"
+          },
+          "showLastUpdated": true,
+          "showProgressBar": true,
+          "title": "Outbound Mbps by interface — $router$",
+          "type": "splunk.line"
+      },
+      "viz_topology_graph": {
+          "context": {
+              "linkColorsEditorConfig": [
+                  {
+                      "match": "plane0-link0",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane0-link1",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "plane0-link2",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane0-link3",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane1-link0",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane1-link1",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane1-link2",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "plane1-link3",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "training0-link0",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "training0-link1",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "training0-link2",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "training0-link3",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "training1-link0",
+                      "value": "#a873dd"
+                  },
+                  {
+                      "match": "training1-link1",
+                      "value": "#a873dd"
+                  },
+                  {
+                      "match": "training1-link2",
+                      "value": "#a873dd"
+                  },
+                  {
+                      "match": "training1-link3",
+                      "value": "#c290f4"
+                  },
+                  {
+                      "match": "inference0-link0",
+                      "value": "#bdbdbc"
+                  },
+                  {
+                      "match": "inference0-link1",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "inference0-link2",
+                      "value": "#bdbdbc"
+                  },
+                  {
+                      "match": "inference0-link3",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "inference1-link0",
+                      "value": "#bdbdbc"
+                  },
+                  {
+                      "match": "inference1-link1",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "inference1-link2",
+                      "value": "#7dcff2"
+                  },
+                  {
+                      "match": "inference1-link3",
+                      "value": "#bdbdbc"
+                  }
+              ],
+              "nodeColorsEditorConfig": [
+                  {
+                      "match": "sar_p00",
+                      "value": "#009CEB"
+                  },
+                  {
+                      "match": "sar_p01",
+                      "value": "#4fa484"
+                  },
+                  {
+                      "match": "trn",
+                      "value": "#a873dd"
+                  },
+                  {
+                      "match": "inf",
+                      "value": "#7dcff2"
+                  }
+              ]
+          },
+          "dataSources": {
+              "primary": "ds_topology"
+          },
+          "eventHandlers": [
               {
-                "token": "router",
-                "key": "row.source.value"
+                  "options": {
+                      "tokens": [
+                          {
+                              "key": "row.source.value",
+                              "token": "router"
+                          }
+                      ]
+                  },
+                  "type": "drilldown.setToken"
               }
-            ]
-          }
-        }
-      ],
-      "options": {
-        "backgroundColor": "#212529",
-        "layout": "force",
-        "linkColorValues": "> primary | seriesByName('linkRole')",
-        "linkColors": "> linkColorValues | matchValue(linkColorsEditorConfig)",
-        "linkDistance": 80,
-        "linkStyle": "straight",
-        "linkWidth": "> primary | seriesByName('linkWidths')",
-        "nodeColorValues": "> primary | seriesByName('nodeRole')",
-        "nodeColors": "> nodeColorValues | matchValue(nodeColorsEditorConfig)",
-        "nodeDragPositions": {
-          "dc01-trn": {
-            "x": 50,
-            "y": 120
+          ],
+          "options": {
+              "backgroundColor": "#212529",
+              "layout": "force",
+              "linkColorValues": "> primary | seriesByName('linkRole')",
+              "linkColors": "> linkColorValues | matchValue(linkColorsEditorConfig)",
+              "linkDistance": 80,
+              "linkStyle": "straight",
+              "linkWidth": "> primary | seriesByName('linkWidths')",
+              "nodeColorValues": "> primary | seriesByName('nodeRole')",
+              "nodeColors": "> nodeColorValues | matchValue(nodeColorsEditorConfig)",
+              "nodeDragPositions": {
+                  "dc01-inf": {
+                      "x": 50,
+                      "y": 240
+                  },
+                  "dc01-trn": {
+                      "x": 50,
+                      "y": 120
+                  },
+                  "dc02-inf": {
+                      "x": 760,
+                      "y": 240
+                  },
+                  "dc02-trn": {
+                      "x": 760,
+                      "y": 120
+                  },
+                  "r01": {
+                      "x": 200,
+                      "y": 30
+                  },
+                  "r02": {
+                      "x": 280,
+                      "y": 100
+                  },
+                  "r03": {
+                      "x": 200,
+                      "y": 270
+                  },
+                  "r04": {
+                      "x": 280,
+                      "y": 340
+                  },
+                  "r05": {
+                      "x": 550,
+                      "y": 30
+                  },
+                  "r06": {
+                      "x": 630,
+                      "y": 100
+                  },
+                  "r07": {
+                      "x": 550,
+                      "y": 270
+                  },
+                  "r08": {
+                      "x": 630,
+                      "y": 340
+                  }
+              },
+              "nodeHorizontalPadding": 40,
+              "nodeIconColors": "> primary | seriesByName('nodeIconColors')",
+              "nodeIcons": "> primary | seriesByName('nodeIcons')",
+              "nodeSize": "> primary | seriesByName('nodeSize')",
+              "nodeTextFontSize": 12,
+              "nodeTexts": "> primary | seriesByName('nodeTexts')",
+              "nodeVerticalPadding": 20,
+              "showDirection": "none",
+              "showZoomControls": true,
+              "tooltipHeaderField": "> primary | seriesByName('source')"
           },
-          "dc01-inf": {
-            "x": 50,
-            "y": 240
-          },
-          "r01": {
-            "x": 200,
-            "y": 30
-          },
-          "r02": {
-            "x": 280,
-            "y": 100
-          },
-          "r03": {
-            "x": 200,
-            "y": 270
-          },
-          "r04": {
-            "x": 280,
-            "y": 340
-          },
-          "r05": {
-            "x": 550,
-            "y": 30
-          },
-          "r06": {
-            "x": 630,
-            "y": 100
-          },
-          "r07": {
-            "x": 550,
-            "y": 270
-          },
-          "r08": {
-            "x": 630,
-            "y": 340
-          },
-          "dc02-trn": {
-            "x": 760,
-            "y": 120
-          },
-          "dc02-inf": {
-            "x": 760,
-            "y": 240
-          }
-        },
-        "nodeHorizontalPadding": 40,
-        "nodeIconColors": "> primary | seriesByName('nodeIconColors')",
-        "nodeIcons": "> primary | seriesByName('nodeIcons')",
-        "nodeSize": "> primary | seriesByName('nodeSize')",
-        "nodeTextFontSize": 12,
-        "nodeTexts": "> primary | seriesByName('nodeTexts')",
-        "nodeVerticalPadding": 20,
-        "showDirection": "none",
-        "showZoomControls": true,
-        "tooltipHeaderField": "> primary | seriesByName('source')"
-      },
-      "showLastUpdated": false,
-      "showProgressBar": false,
-      "title": "Scale Across Topology",
-      "type": "splunk.networkGraph"
-    },
-    "viz_link_traffic": {
-      "dataSources": {
-        "primary": "ds_link_traffic"
-      },
-      "options": {
-        "backgroundColor": "#212529",
-        "legendDisplay": "right",
-        "yAxisTitleText": "Mbps"
-      },
-      "showLastUpdated": true,
-      "showProgressBar": true,
-      "title": "Outbound Mbps by interface — $router$",
-      "type": "splunk.line"
-    }
+          "showLastUpdated": false,
+          "showProgressBar": false,
+          "title": "Scale Across Topology",
+          "type": "splunk.networkGraph"
+      }
   },
   "dataSources": {
-    "ds_topology": {
-      "name": "topology",
-      "options": {
-        "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r01,r02,r05,r06,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#c290f4,#7dcff2,#c290f4,#c290f4,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#a873dd,#bdbdbc,#7dcff2,#c290f4,#c290f4,#c290f4,#7dcff2,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#c290f4,#7dcff2,#bdbdbc\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r01,r02,r05,r06,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
+      "ds_link_traffic": {
+          "name": "link_traffic",
+          "options": {
+              "query": "| mstats latest(_value) AS octets\n  WHERE index=mdt_metrics\n    metric_name=\"openconfig-interfaces:interfaces/interface.state/counters/out_octets\"\n    source=\"$router$\"\n  span=30s BY name\n| where match(name, \"^EightHundredGigE\")\n| eventstats max(octets) AS peak_octets BY name\n| where peak_octets > 0\n| sort 0 name, _time\n| streamstats current=f window=1 last(octets) AS prev_octets last(_time) AS prev_time BY name\n| eval secs=_time-prev_time\n| eval mbps=if(isnull(prev_octets) OR secs<=0 OR octets<prev_octets, null(),\n               round((octets-prev_octets)*8/(secs*1000000), 3))\n| timechart span=30s limit=0 avg(mbps) BY name",
+              "queryParameters": {
+                  "earliest": "$global_time.earliest$",
+                  "latest": "$global_time.latest$"
+              }
+          },
+          "type": "ds.search"
       },
-      "type": "ds.search"
-    },
-    "ds_link_traffic": {
-      "name": "link_traffic",
-      "options": {
-        "query": "| mstats latest(_value) AS octets\n  WHERE index=mdt_metrics\n    metric_name=\"openconfig-interfaces:interfaces/interface.state/counters/out_octets\"\n    source=\"$router$\"\n  span=30s BY name\n| where match(name, \"^EightHundredGigE\")\n| eventstats max(octets) AS peak_octets BY name\n| where peak_octets > 0\n| sort 0 name, _time\n| streamstats current=f window=1 last(octets) AS prev_octets last(_time) AS prev_time BY name\n| eval secs=_time-prev_time\n| eval mbps=if(isnull(prev_octets) OR secs<=0 OR octets<prev_octets, null(),\n               round((octets-prev_octets)*8/(secs*1000000), 3))\n| timechart span=30s limit=0 avg(mbps) BY name",
-        "queryParameters": {
-          "earliest": "$global_time.earliest$",
-          "latest": "$global_time.latest$"
-        }
-      },
-      "type": "ds.search"
-    }
+      "ds_topology": {
+          "name": "topology",
+          "options": {
+              "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r01,r02,r05,r06,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#c290f4,#7dcff2,#c290f4,#c290f4,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#a873dd,#bdbdbc,#7dcff2,#c290f4,#c290f4,#c290f4,#7dcff2,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#c290f4,#7dcff2,#bdbdbc\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r01,r02,r05,r06,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
+          },
+          "type": "ds.search"
+      }
   },
   "layout": {
-    "globalInputs": [
-      "input_global_time"
-    ],
-    "layoutDefinitions": {
-      "layout_1": {
-        "structure": [
-          {
-            "item": "viz_topology_graph",
-            "position": {
-              "h": 480,
-              "w": 1200,
-              "x": 0,
-              "y": 0
-            },
-            "type": "block"
-          },
-          {
-            "item": "viz_label_dc0",
-            "position": {
-              "h": 32,
-              "w": 60,
-              "x": 60,
-              "y": 340
-            },
-            "type": "block"
-          },
-          {
-            "item": "viz_label_dc1",
-            "position": {
-              "h": 32,
-              "w": 80,
-              "x": 1090,
-              "y": 340
-            },
-            "type": "block"
-          },
-          {
-            "item": "viz_label_plane0",
-            "position": {
-              "h": 32,
-              "w": 210,
-              "x": 520,
-              "y": 80
-            },
-            "type": "block"
-          },
-          {
-            "item": "viz_label_plane1",
-            "position": {
-              "h": 32,
-              "w": 210,
-              "x": 520,
-              "y": 420
-            },
-            "type": "block"
-          },
-          {
-            "item": "viz_link_traffic",
-            "position": {
-              "h": 280,
-              "w": 1200,
-              "x": 0,
-              "y": 500
-            },
-            "type": "block"
+      "globalInputs": [
+          "input_global_time"
+      ],
+      "layoutDefinitions": {
+          "layout_1": {
+              "structure": [
+                  {
+                      "item": "viz_topology_graph",
+                      "position": {
+                          "h": 480,
+                          "w": 1200,
+                          "x": 0,
+                          "y": 0
+                      },
+                      "type": "block"
+                  },
+                  {
+                      "item": "viz_label_dc0",
+                      "position": {
+                          "h": 32,
+                          "w": 60,
+                          "x": 80,
+                          "y": 220
+                      },
+                      "type": "block"
+                  },
+                  {
+                      "item": "viz_label_dc1",
+                      "position": {
+                          "h": 32,
+                          "w": 80,
+                          "x": 1080,
+                          "y": 220
+                      },
+                      "type": "block"
+                  },
+                  {
+                      "item": "viz_label_plane0",
+                      "position": {
+                          "h": 32,
+                          "w": 210,
+                          "x": 480,
+                          "y": 20
+                      },
+                      "type": "block"
+                  },
+                  {
+                      "item": "viz_label_plane1",
+                      "position": {
+                          "h": 32,
+                          "w": 210,
+                          "x": 540,
+                          "y": 440
+                      },
+                      "type": "block"
+                  },
+                  {
+                      "item": "viz_link_traffic",
+                      "position": {
+                          "h": 280,
+                          "w": 1200,
+                          "x": 0,
+                          "y": 500
+                      },
+                      "type": "block"
+                  }
+              ],
+              "type": "absolute"
           }
-        ],
-        "type": "absolute"
+      },
+      "tabs": {
+          "items": [
+              {
+                  "label": "Scale Across Topology",
+                  "layoutId": "layout_1"
+              }
+          ]
       }
-    },
-    "tabs": {
-      "items": [
-        {
-          "label": "Scale Across Topology",
-          "layoutId": "layout_1"
-        }
-      ]
-    }
   }
 }

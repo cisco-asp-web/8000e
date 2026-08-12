@@ -108,7 +108,7 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:a000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # training all-to-all: a000[1..8] -> b000[1..8] full UDP mesh
+        # training collective: a000[1..4] -> b000[1..256], bursty 60/5/45/5
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:a000:: --dst-prefix 2001:db8:b000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc01-inf:
@@ -148,8 +148,8 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:c000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # inference: c000[1..8] -> d000[1..8] paired (::i -> ::i) smaller UDP streams
-        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:c000:: --dst-prefix 2001:db8:d000:: >/var/log/trafgen.log 2>&1 &'"
+        # inference: c000[1..4] -> d000[1..256], small payloads at a steady rate
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --src-prefix 2001:db8:c000:: --dst-prefix 2001:db8:d000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc02-trn:
       kind: linux
@@ -188,7 +188,7 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:b000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # training all-to-all: b000[1..8] -> a000[1..8] full UDP mesh
+        # training collective: b000[1..4] -> a000[1..256], bursty 60/5/45/5
         - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile training --src-prefix 2001:db8:b000:: --dst-prefix 2001:db8:a000:: >/var/log/trafgen.log 2>&1 &'"
 
     dc02-inf:
@@ -228,8 +228,8 @@ topology:
         - "ip link add lo8 type dummy"
         - "ip addr add 2001:db8:d000::8/128 dev lo8 nodad"
         - "ip link set lo8 up"
-        # inference: d000[1..8] -> c000[1..8] paired (::i -> ::i) smaller UDP streams
-        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --pattern paired --src-prefix 2001:db8:d000:: --dst-prefix 2001:db8:c000:: >/var/log/trafgen.log 2>&1 &'"
+        # inference: d000[1..4] -> c000[1..256], small payloads at a steady rate
+        - "sh -c 'nohup python3 /scripts/udp_trafgen.py --profile inference --src-prefix 2001:db8:d000:: --dst-prefix 2001:db8:c000:: >/var/log/trafgen.log 2>&1 &'"
 
   links:
   # plane 0
