@@ -1,8 +1,24 @@
 {
   "title": "Scale Across Topology (Demo)",
-  "description": "Demo dashboard: tab through idle → training → inference link colors. Import via Dashboard Studio → Edit → Source code.",
-  "inputs": {},
+  "description": "Click-through demo: topology → SRv6-TE steering → live traffic. Import via Dashboard Studio → Edit → Source code.",
+  "inputs": {
+    "input_global_time": {
+      "options": {
+        "defaultValue": "-60m,now",
+        "token": "global_time"
+      },
+      "title": "Time range",
+      "type": "input.timerange"
+    }
+  },
   "defaults": {
+    "tokens": {
+      "default": {
+        "router": {
+          "value": "r01"
+        }
+      }
+    },
     "dataSources": {
       "ds.search": {
         "options": {
@@ -63,7 +79,7 @@
       "showProgressBar": false,
       "type": "splunk.markdown"
     },
-    "viz_topology_idle": {
+    "viz_topology_topology": {
       "context": {
         "linkColorsEditorConfig": [
           {
@@ -183,7 +199,7 @@
         ]
       },
       "dataSources": {
-        "primary": "ds_topology_idle"
+        "primary": "ds_topology_topology"
       },
       "eventHandlers": [
         {
@@ -271,75 +287,75 @@
       },
       "showLastUpdated": false,
       "showProgressBar": false,
-      "title": "1 — Idle (no traffic)",
+      "title": "1 — Topology",
       "type": "splunk.networkGraph"
     },
-    "viz_topology_training": {
+    "viz_topology_srv6te": {
       "context": {
         "linkColorsEditorConfig": [
           {
             "match": "plane0-link0",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link1",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link3",
-            "value": "#bdbdbc"
+            "value": "#a873dd"
           },
           {
             "match": "plane1-link0",
-            "value": "#c290f4"
+            "value": "#7dcff2"
           },
           {
             "match": "plane1-link1",
-            "value": "#c290f4"
+            "value": "#7dcff2"
           },
           {
             "match": "plane1-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane1-link3",
-            "value": "#bdbdbc"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link0",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link1",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link3",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training1-link0",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training1-link1",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training1-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training1-link3",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "inference0-link0",
@@ -351,11 +367,11 @@
           },
           {
             "match": "inference0-link2",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           },
           {
             "match": "inference0-link3",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           },
           {
             "match": "inference1-link0",
@@ -367,11 +383,11 @@
           },
           {
             "match": "inference1-link2",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           },
           {
             "match": "inference1-link3",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           }
         ],
         "nodeColorsEditorConfig": [
@@ -394,7 +410,7 @@
         ]
       },
       "dataSources": {
-        "primary": "ds_topology_training"
+        "primary": "ds_topology_srv6te"
       },
       "eventHandlers": [
         {
@@ -482,59 +498,59 @@
       },
       "showLastUpdated": false,
       "showProgressBar": false,
-      "title": "2 — Training traffic",
+      "title": "2 — SRv6-TE steering",
       "type": "splunk.networkGraph"
     },
-    "viz_topology_inference": {
+    "viz_topology_traffic": {
       "context": {
         "linkColorsEditorConfig": [
           {
             "match": "plane0-link0",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link1",
-            "value": "#7dcff2"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane0-link3",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "plane1-link0",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link1",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link2",
-            "value": "#c290f4"
-          },
-          {
-            "match": "plane1-link3",
             "value": "#7dcff2"
           },
           {
+            "match": "plane1-link1",
+            "value": "#7dcff2"
+          },
+          {
+            "match": "plane1-link2",
+            "value": "#a873dd"
+          },
+          {
+            "match": "plane1-link3",
+            "value": "#a873dd"
+          },
+          {
             "match": "training0-link0",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link1",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link2",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training0-link3",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "training1-link0",
@@ -550,7 +566,7 @@
           },
           {
             "match": "training1-link3",
-            "value": "#c290f4"
+            "value": "#a873dd"
           },
           {
             "match": "inference0-link0",
@@ -558,11 +574,11 @@
           },
           {
             "match": "inference0-link1",
-            "value": "#7dcff2"
+            "value": "#bdbdbc"
           },
           {
             "match": "inference0-link2",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           },
           {
             "match": "inference0-link3",
@@ -574,7 +590,7 @@
           },
           {
             "match": "inference1-link1",
-            "value": "#7dcff2"
+            "value": "#bdbdbc"
           },
           {
             "match": "inference1-link2",
@@ -582,7 +598,7 @@
           },
           {
             "match": "inference1-link3",
-            "value": "#bdbdbc"
+            "value": "#7dcff2"
           }
         ],
         "nodeColorsEditorConfig": [
@@ -605,7 +621,7 @@
         ]
       },
       "dataSources": {
-        "primary": "ds_topology_inference"
+        "primary": "ds_topology_traffic"
       },
       "eventHandlers": [
         {
@@ -693,39 +709,67 @@
       },
       "showLastUpdated": false,
       "showProgressBar": false,
-      "title": "3 — Training + inference",
+      "title": "3 — SRv6-TE + live traffic",
       "type": "splunk.networkGraph"
+    },
+    "viz_link_traffic": {
+      "dataSources": {
+        "primary": "ds_link_traffic"
+      },
+      "options": {
+        "backgroundColor": "#212529",
+        "legendDisplay": "right",
+        "yAxisTitleText": "Mbps"
+      },
+      "showLastUpdated": true,
+      "showProgressBar": true,
+      "title": "Outbound Mbps by interface — $router$",
+      "type": "splunk.line"
     }
   },
   "dataSources": {
-    "ds_topology_idle": {
-      "name": "topology_idle",
+    "ds_topology_topology": {
+      "name": "topology_topology",
       "options": {
         "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r01,r02,r05,r06,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc,#bdbdbc\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r01,r02,r05,r06,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
       },
       "type": "ds.search"
     },
-    "ds_topology_training": {
-      "name": "topology_training",
+    "ds_topology_srv6te": {
+      "name": "topology_srv6te",
       "options": {
-        "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r01,r02,r05,r06,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#c290f4,#c290f4,#c290f4,#bdbdbc,#c290f4,#c290f4,#bdbdbc,#bdbdbc,#c290f4,#c290f4,#bdbdbc,#bdbdbc,#c290f4,#c290f4,#c290f4,#bdbdbc,#c290f4,#c290f4,#bdbdbc,#bdbdbc,#c290f4,#c290f4,#bdbdbc,#bdbdbc\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r01,r02,r05,r06,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
+        "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc02-trn,dc02-trn,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,training,training,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,trn,trn,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#a873dd,#a873dd,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,training1-link0,training1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,32)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
       },
       "type": "ds.search"
     },
-    "ds_topology_inference": {
-      "name": "topology_inference",
+    "ds_topology_traffic": {
+      "name": "topology_traffic",
       "options": {
-        "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r01,r02,r05,r06,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,inference,inference,training,training,inference,inference,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,inf,inf,trn,trn,inf,inf,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,inference0-link0,inference0-link1,training1-link0,training1-link1,inference1-link0,inference1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#c290f4,#7dcff2,#c290f4,#c290f4,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#a873dd,#bdbdbc,#7dcff2,#c290f4,#c290f4,#c290f4,#7dcff2,#c290f4,#c290f4,#bdbdbc,#7dcff2,#a873dd,#c290f4,#7dcff2,#bdbdbc\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r01,r02,r05,r06,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,36)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
+        "query": "| makeresults\n| eval \n    source=\"r01,r02,r03,r04,r05,r06,r07,r08,dc01-trn,dc01-inf,dc02-trn,dc02-inf,r01,r02,r01,r02,dc01-trn,dc01-trn,dc02-trn,dc02-trn,r03,r04,r03,r04,dc01-trn,dc01-trn,dc01-inf,dc01-inf,dc02-trn,dc02-trn,dc02-inf,dc02-inf\",\n    target=\",,,,,,,,,,,,r05,r06,r06,r05,r01,r02,r05,r06,r07,r08,r08,r07,r03,r04,r03,r04,r07,r08,r07,r08\",\n    nodeTexts=\"r01,r02,r03,r04,r05,r06,r07,r08,training,inference,training,inference,r01,r02,r01,r02,training,training,training,training,r03,r04,r03,r04,training,training,inference,inference,training,training,inference,inference\",\n    type=\"DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC1,DC2,DC2,DC2,DC2\",\n    nodeRole=\"sar_p00,sar_p00,sar_p01,sar_p01,sar_p00,sar_p00,sar_p01,sar_p01,trn,inf,trn,inf,sar_p00,sar_p00,sar_p00,sar_p00,trn,trn,trn,trn,sar_p01,sar_p01,sar_p01,sar_p01,trn,trn,inf,inf,trn,trn,inf,inf\",\n    nodeColors=\"#009CEB,#009CEB,#4fa484,#4fa484,#009CEB,#009CEB,#4fa484,#4fa484,#a873dd,#7dcff2,#a873dd,#7dcff2,#009CEB,#009CEB,#009CEB,#009CEB,#a873dd,#a873dd,#a873dd,#a873dd,#4fa484,#4fa484,#4fa484,#4fa484,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    nodeIcons=\"networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,networkDevice,networkDevice,networkDevice,networkDevice,servers,servers,servers,servers,servers,servers,servers,servers\",\n    nodeIconColors=\"#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF,#FFFFFF\",\n    nodeValues=\"10,10,10,10,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,10,10,10,10,5,5,5,5,5,5,5,5\",\n    nodeSize=\"32,32,32,32,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,32,32,32,32,30,30,30,30,30,30,30,30\",\n    linkRole=\",,,,,,,,,,,,plane0-link0,plane0-link1,plane0-link2,plane0-link3,training0-link0,training0-link1,training1-link0,training1-link1,plane1-link0,plane1-link1,plane1-link2,plane1-link3,training0-link2,training0-link3,inference0-link2,inference0-link3,training1-link2,training1-link3,inference1-link2,inference1-link3\",\n    linkColors=\",,,,,,,,,,,,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#a873dd,#a873dd,#7dcff2,#7dcff2,#a873dd,#a873dd,#7dcff2,#7dcff2\",\n    linkValues=\",,,,,,,,,,,,4,4,4,4,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,1\",\n    linkWidths=\",,,,,,,,,,,,2,2,2,2,1.5,1.5,1.5,1.5,2,2,2,2,1.5,1.5,1.5,1.5,1.5,1.5,1.5,1.5\",\n    linkRouter=\",,,,,,,,,,,,r01,r02,r01,r02,r01,r02,r05,r06,r03,r04,r03,r04,r03,r04,r03,r04,r07,r08,r07,r08\",\n    linkIfname=\",,,,,,,,,,,,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/0,EightHundredGigE0/0/0/1,EightHundredGigE0/0/0/6,EightHundredGigE0/0/0/7,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/16,EightHundredGigE0/0/0/17,EightHundredGigE0/0/0/17\",\n    row_index=mvrange(0,32)\n| mvexpand row_index\n| eval \n    source=mvindex(split(source,\",\"),row_index),\n    target=mvindex(split(target,\",\"),row_index),\n    nodeTexts=mvindex(split(nodeTexts,\",\"),row_index),\n    type=mvindex(split(type,\",\"),row_index),\n    nodeRole=mvindex(split(nodeRole,\",\"),row_index),\n    nodeColors=mvindex(split(nodeColors,\",\"),row_index),\n    nodeIcons=mvindex(split(nodeIcons,\",\"),row_index),\n    nodeIconColors=mvindex(split(nodeIconColors,\",\"),row_index),\n    nodeValues=mvindex(split(nodeValues,\",\"),row_index),\n    nodeSize=mvindex(split(nodeSize,\",\"),row_index),\n    linkRole=mvindex(split(linkRole,\",\"),row_index),\n    linkColors=mvindex(split(linkColors,\",\"),row_index),\n    linkValues=mvindex(split(linkValues,\",\"),row_index),\n    linkWidths=mvindex(split(linkWidths,\",\"),row_index),\n    linkRouter=mvindex(split(linkRouter,\",\"),row_index),\n    linkIfname=mvindex(split(linkIfname,\",\"),row_index)\n| eval nodeValues=tonumber(nodeValues), nodeSize=tonumber(nodeSize)\n| eval linkValues=if(len(linkValues)==0, null(), tonumber(linkValues)), linkWidths=if(len(linkWidths)==0, null(), tonumber(linkWidths))\n| eval target=if(len(target)==0, null(), target)\n| table source, target, nodeTexts, type, nodeRole, nodeColors, nodeIcons, nodeIconColors, nodeValues, nodeSize, linkRole, linkColors, linkValues, linkWidths, linkRouter, linkIfname"
+      },
+      "type": "ds.search"
+    },
+    "ds_link_traffic": {
+      "name": "link_traffic",
+      "options": {
+        "query": "| mstats latest(_value) AS octets\n  WHERE index=mdt_metrics\n    metric_name=\"openconfig-interfaces:interfaces/interface.state/counters/out_octets\"\n    source=\"$router$\"\n  span=30s BY name\n| where match(name, \"^EightHundredGigE\")\n    AND NOT match(name, \"^(EightHundredGigE0/0/0/16|EightHundredGigE0/0/0/17|EightHundredGigE0/0/0/32)$\")\n| eventstats max(octets) AS peak_octets BY name\n| where peak_octets > 0\n| sort 0 name, _time\n| streamstats current=f window=1 last(octets) AS prev_octets last(_time) AS prev_time BY name\n| eval secs=_time-prev_time\n| eval mbps=if(isnull(prev_octets) OR secs<=0 OR octets<prev_octets, null(),\n               round((octets-prev_octets)*8/(secs*1000000), 3))\n| timechart span=30s limit=0 avg(mbps) BY name",
+        "queryParameters": {
+          "earliest": "$global_time.earliest$",
+          "latest": "$global_time.latest$"
+        }
       },
       "type": "ds.search"
     }
   },
   "layout": {
+    "globalInputs": [
+      "input_global_time"
+    ],
     "layoutDefinitions": {
-      "layout_idle": {
+      "layout_topology": {
         "structure": [
           {
-            "item": "viz_topology_idle",
+            "item": "viz_topology_topology",
             "position": {
               "h": 700,
               "w": 1200,
@@ -777,10 +821,10 @@
         ],
         "type": "absolute"
       },
-      "layout_training": {
+      "layout_srv6te": {
         "structure": [
           {
-            "item": "viz_topology_training",
+            "item": "viz_topology_srv6te",
             "position": {
               "h": 700,
               "w": 1200,
@@ -832,12 +876,12 @@
         ],
         "type": "absolute"
       },
-      "layout_inference": {
+      "layout_traffic": {
         "structure": [
           {
-            "item": "viz_topology_inference",
+            "item": "viz_topology_traffic",
             "position": {
-              "h": 700,
+              "h": 420,
               "w": 1200,
               "x": 0,
               "y": 0
@@ -849,8 +893,8 @@
             "position": {
               "h": 32,
               "w": 60,
-              "x": 60,
-              "y": 340
+              "x": 147,
+              "y": 191
             },
             "type": "block"
           },
@@ -859,8 +903,8 @@
             "position": {
               "h": 32,
               "w": 80,
-              "x": 1090,
-              "y": 340
+              "x": 1009,
+              "y": 191
             },
             "type": "block"
           },
@@ -869,8 +913,8 @@
             "position": {
               "h": 32,
               "w": 210,
-              "x": 520,
-              "y": 80
+              "x": 482,
+              "y": 18
             },
             "type": "block"
           },
@@ -879,8 +923,18 @@
             "position": {
               "h": 32,
               "w": 210,
-              "x": 520,
-              "y": 420
+              "x": 534,
+              "y": 381
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_link_traffic",
+            "position": {
+              "h": 240,
+              "w": 1200,
+              "x": 0,
+              "y": 440
             },
             "type": "block"
           }
@@ -891,16 +945,16 @@
     "tabs": {
       "items": [
         {
-          "label": "1 — Idle (no traffic)",
-          "layoutId": "layout_idle"
+          "label": "1 — Topology",
+          "layoutId": "layout_topology"
         },
         {
-          "label": "2 — Training traffic",
-          "layoutId": "layout_training"
+          "label": "2 — SRv6-TE steering",
+          "layoutId": "layout_srv6te"
         },
         {
-          "label": "3 — Training + inference",
-          "layoutId": "layout_inference"
+          "label": "3 — SRv6-TE + live traffic",
+          "layoutId": "layout_traffic"
         }
       ]
     }

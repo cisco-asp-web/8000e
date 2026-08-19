@@ -26,7 +26,7 @@ physical link separately.
 Usage:
   ./topo_to_spl.py [--topo topology.clab.yaml] [--expand] [-o out.spl]
   ./topo_to_spl.py --demo-dashboard splunk/topology_network_graph.demo.json
-  ./topo_to_spl.py --demo-state training -o training.spl --dashboard training.json
+  ./topo_to_spl.py --demo-state srv6te -o srv6te.spl --dashboard srv6te.json
 """
 
 import argparse
@@ -106,15 +106,33 @@ HOST_LINK_COLOR_DEFAULTS = {
 }
 LINK_COLOR_DEFAULTS = {**FABRIC_LINK_COLOR_DEFAULTS, **HOST_LINK_COLOR_DEFAULTS}
 
-# Demo traffic visualization (see --demo-dashboard / --demo-state).
-DEMO_STATES = ("idle", "training", "inference")
-DEMO_IDLE_COLOR = "#bdbdbc"
-DEMO_TRAINING_ACTIVE_COLOR = "#c290f4"
+# Demo click-through (see --demo-dashboard / --demo-state). Three tabs, meant to
+# be screenshotted in order:
+#   topology  the fabric on its own, every link neutral
+#   srv6te    links colored by the traffic class SRv6-TE steers onto them
+#   traffic   same colors, plus the live per-interface traffic panel
+DEMO_STATES = ("topology", "srv6te", "traffic")
+# Neutral link color for the base view. Light enough to read against
+# PANEL_BACKGROUND (#212529) without competing with the node colors.
+DEMO_BASE_LINK_COLOR = "#bdbdbc"
+# Steered-link colors match the host node whose traffic they carry, so the eye
+# follows host -> access link -> WAN bundle without needing a legend.
+DEMO_TRAINING_COLOR = ROLE_STYLE["trn"]["color"]
+DEMO_INFERENCE_COLOR = ROLE_STYLE["inf"]["color"]
 DEMO_TAB_LABELS = {
-    "idle": "1 — Idle (no traffic)",
-    "training": "2 — Training traffic",
-    "inference": "3 — Training + inference",
+    "topology": "1 — Topology",
+    "srv6te": "2 — SRv6-TE steering",
+    "traffic": "3 — SRv6-TE + live traffic",
 }
+# Only this tab carries the traffic panel; the first two stay pure topology.
+DEMO_TRAFFIC_STATE = "traffic"
+# Demo only: which collapsed WAN bundles carry inference, named by router pair
+# rather than by link index so the steered path reads directly off this table.
+# Both sit in Plane-2, giving inference one path per DC-1 inference-facing
+# router: dc01-inf -> r03 -> r07 -> dc02-inf and dc01-inf -> r04 -> r08 ->
+# dc02-inf. Every bundle not listed here carries training, which keeps the
+# 75/25 split (2 of 8 bundles) without hardcoding the ratio anywhere.
+DEMO_INFERENCE_BUNDLES = (("r03", "r07"), ("r04", "r08"))
 # Fallback when a link role is missing from LINK_COLOR_DEFAULTS (SPL-only / legacy).
 TRAINING_LINK_COLOR = PALETTE.get("red", "#af575a")
 INFERENCE_LINK_COLOR = PALETTE.get("yellow", "#f8be44")
@@ -358,39 +376,85 @@ def build_link_color_matches(existing=None):
     return matches
 
 
-def _training_active_roles():
-    roles = set()
-    for plane_idx in (0, 1):
-        for link_idx in range(FABRIC_ODN_TRAINING_BUNDLES):
-            roles.add(f"plane{plane_idx}-link{link_idx}")
-    for dc_idx in (0, 1):
-        for link_idx in range(4):
-            roles.add(f"training{dc_idx}-link{link_idx}")
-    return roles
+def _link_router(row):
+    """The router endpoint of a link row, whichever side it is on."""
+    for endpoint in (row.get("source"), row.get("target")):
+        if endpoint in ROUTERS:
+            return endpoint
+    return None
 
 
-def _inference_active_roles():
-    roles = set()
-    for plane_idx in (0, 1):
-        roles.add(f"plane{plane_idx}-link{FABRIC_ODN_TRAINING_BUNDLES}")
-    for dc_idx in (0, 1):
-        for link_idx in range(4):
-            roles.add(f"inference{dc_idx}-link{link_idx}")
-    return roles
+def _bundle_pair(row):
+    """Unordered router pair for a WAN link row, or None for anything else."""
+    a, b = row.get("source"), row.get("target")
+    if a in ROUTERS and b in ROUTERS:
+        return frozenset((a, b))
+    return None
 
 
-TRAINING_ACTIVE_ROLES = _training_active_roles()
-INFERENCE_ACTIVE_ROLES = _inference_active_roles()
+def demo_role_classes(rows):
+    """Split link roles into (training, inference) sets for the demo.
+
+    WAN bundles are classified by router pair against DEMO_INFERENCE_BUNDLES;
+    everything else is training. A host access link then inherits the class of
+    the router it lands on, but only if that router actually terminates a
+    bundle of that class -- an access link never implies a steered path that
+    does not exist. Roles in neither set are unsteered and render neutral (or
+    are dropped, see demo_rows).
+
+    Derived from the edge list at generation time, so re-pointing a bundle in
+    topology.clab.yaml or in DEMO_INFERENCE_BUNDLES keeps the access links
+    honest without further edits.
+    """
+    inference_pairs = {frozenset(pair) for pair in DEMO_INFERENCE_BUNDLES}
+    training, inference = set(), set()
+    trn_routers, inf_routers = set(), set()
+
+    for row in rows or []:
+        role, pair = row.get("linkRole"), _bundle_pair(row)
+        if not role or pair is None:
+            continue
+        if pair in inference_pairs:
+            inference.add(role)
+            inf_routers |= set(pair)
+        else:
+            training.add(role)
+            trn_routers |= set(pair)
+
+    for row in rows or []:
+        role = row.get("linkRole")
+        if not role or _bundle_pair(row) is not None:
+            continue
+        router = _link_router(row)
+        if role.startswith("inference") and router in inf_routers:
+            inference.add(role)
+        elif role.startswith("training") and router in trn_routers:
+            training.add(role)
+    return training, inference
 
 
-def demo_link_color_map(state):
-    """Per-linkRole colors for idle / training / inference demo scenarios."""
-    if state == "inference":
-        return dict(LINK_COLOR_DEFAULTS)
-    colors = {role: DEMO_IDLE_COLOR for role in LINK_COLOR_DEFAULTS}
-    if state == "training":
-        for role in TRAINING_ACTIVE_ROLES:
-            colors[role] = DEMO_TRAINING_ACTIVE_COLOR
+def demo_link_color_map(state, rows=None):
+    """Per-linkRole colors for one demo state.
+
+    "topology" leaves every link neutral. The other two share one color map:
+    tab 3 differs from tab 2 only by adding the traffic panel, so the graph
+    itself must look identical between them.
+
+    Needs `rows` to classify anything; without them every role comes back
+    neutral.
+    """
+    if state == "topology":
+        return {role: DEMO_BASE_LINK_COLOR for role in LINK_COLOR_DEFAULTS}
+
+    training, inference = demo_role_classes(rows)
+    colors = {}
+    for role in LINK_COLOR_DEFAULTS:
+        if role in training:
+            colors[role] = DEMO_TRAINING_COLOR
+        elif role in inference:
+            colors[role] = DEMO_INFERENCE_COLOR
+        else:
+            colors[role] = DEMO_BASE_LINK_COLOR
     return colors
 
 
@@ -401,12 +465,31 @@ def build_link_color_matches_from_map(color_map):
     ]
 
 
-def apply_demo_colors(rows, state):
-    color_map = demo_link_color_map(state)
-    for row in rows:
-        if row["linkRole"]:
-            row["linkColors"] = color_map[row["linkRole"]]
-    return rows
+def demo_rows(base_rows, state):
+    """Rows for one demo state: colored, with unsteered links dropped.
+
+    Tab 1 is the fabric as built, so every link stays. On the steered tabs a
+    link carrying neither class would render neutral next to colored ones and
+    read as "off" rather than "not part of this story", so it is removed
+    instead. That is the inference access links landing on routers with no
+    inference bundle -- each inference host dual-homes onto four routers but
+    only two of them carry inference.
+
+    Node rows (no linkRole) always survive, so dropping a link never removes
+    the node at either end.
+    """
+    color_map = demo_link_color_map(state, base_rows)
+    out = []
+    for row in base_rows:
+        row = dict(row)
+        role = row["linkRole"]
+        if role:
+            color = color_map[role]
+            if state != "topology" and color == DEMO_BASE_LINK_COLOR:
+                continue
+            row["linkColors"] = color
+        out.append(row)
+    return out
 
 
 def load_topology(path, exclude_rr=True):
@@ -520,7 +603,20 @@ NODE_POSITIONS = {
 LABEL_FONT_SIZE = 20
 PANEL_BACKGROUND = "#212529"
 
+# Graph block geometry. Height is full when the graph owns the tab and shorter
+# when it shares the tab with the traffic panel; LABEL_OVERLAYS carries one
+# tuned position set per height. The padding values must match the
+# nodeHorizontal/VerticalPadding viz options or _graph_fit() will be wrong.
+GRAPH_WIDTH = 1200
+GRAPH_HORIZONTAL_PADDING = 40
+GRAPH_VERTICAL_PADDING = 20
+GRAPH_FULL_HEIGHT = 700
 GRAPH_LAYOUT_HEIGHT = 480
+GRAPH_CHART_GAP = 20
+# Demo tab 3 only: shorter than the main dashboard so the graph and the whole
+# traffic panel fit without scrolling (420 + 20 + 240 = 680).
+DEMO_TRAFFIC_GRAPH_HEIGHT = 420
+DEMO_TRAFFIC_CHART_HEIGHT = 240
 DS_TOPOLOGY_ID = "ds_topology"
 DS_LINKS_ID = "ds_topology_links"
 DS_NODES_ID = "ds_topology_nodes"
@@ -722,7 +818,7 @@ def _topology_split_data_sources(rows, links_id=DS_LINKS_ID, nodes_id=DS_NODES_I
 
 def _traffic_chart_layout_y():
     """Y position for chart below the graph."""
-    return GRAPH_LAYOUT_HEIGHT + 20
+    return GRAPH_LAYOUT_HEIGHT + GRAPH_CHART_GAP
 
 
 def _link_traffic_chart_viz():
@@ -795,7 +891,7 @@ def ensure_link_traffic_panel(dash, rows=None, topology_spl=None):
         graph["position"]["h"] = GRAPH_LAYOUT_HEIGHT
 
     chart_y = _traffic_chart_layout_y()
-    chart_pos = {"x": 0, "y": chart_y, "w": 1200, "h": TRAFFIC_CHART_HEIGHT}
+    chart_pos = {"x": 0, "y": chart_y, "w": GRAPH_WIDTH, "h": TRAFFIC_CHART_HEIGHT}
     block = by_item.get(TRAFFIC_CHART_VIZ_ID)
     if block is None:
         structure.append({"item": TRAFFIC_CHART_VIZ_ID, "type": "block", "position": chart_pos})
@@ -824,13 +920,13 @@ def configure_topology_graph_viz(viz, existing_links=None):
         "nodeColorValues": "> primary | seriesByName('nodeRole')",
         "nodeColors": "> nodeColorValues | matchValue(nodeColorsEditorConfig)",
         "nodeDragPositions": NODE_POSITIONS,
-        "nodeHorizontalPadding": 40,
+        "nodeHorizontalPadding": GRAPH_HORIZONTAL_PADDING,
         "nodeIconColors": "> primary | seriesByName('nodeIconColors')",
         "nodeIcons": "> primary | seriesByName('nodeIcons')",
         "nodeSize": "> primary | seriesByName('nodeSize')",
         "nodeTextFontSize": 12,
         "nodeTexts": "> primary | seriesByName('nodeTexts')",
-        "nodeVerticalPadding": 20,
+        "nodeVerticalPadding": GRAPH_VERTICAL_PADDING,
         "showDirection": "none",
         "showZoomControls": True,
         "tooltipHeaderField": "> primary | seriesByName('source')",
@@ -838,28 +934,87 @@ def configure_topology_graph_viz(viz, existing_links=None):
     opts.pop("nodeIds", None)
 
 
+# Text overlays are separate blocks in the absolute layout, so they do not
+# follow the graph when its height changes. Each label therefore carries a
+# position per graph height, tuned by eye. Heights with no entry are derived
+# from the nearest one via _rescale_label(); add an entry here to pin a height
+# instead of deriving it.
 LABEL_OVERLAYS = [
     {
         "id": "viz_label_dc0",
         "text": "DC-1",
-        "position": {"x": 60, "y": 340, "w": 60, "h": 32},
+        "positions": {
+            GRAPH_FULL_HEIGHT:   {"x": 60, "y": 340, "w": 60, "h": 32},
+            GRAPH_LAYOUT_HEIGHT: {"x": 80, "y": 220, "w": 60, "h": 32},
+        },
     },
     {
         "id": "viz_label_dc1",
         "text": "DC-2",
-        "position": {"x": 1090, "y": 340, "w": 80, "h": 32},
+        "positions": {
+            GRAPH_FULL_HEIGHT:   {"x": 1090, "y": 340, "w": 80, "h": 32},
+            GRAPH_LAYOUT_HEIGHT: {"x": 1080, "y": 220, "w": 80, "h": 32},
+        },
     },
     {
         "id": "viz_label_plane0",
         "text": "Scale Across Plane-1",
-        "position": {"x": 520, "y": 80, "w": 210, "h": 32},
+        "positions": {
+            GRAPH_FULL_HEIGHT:   {"x": 520, "y": 80, "w": 210, "h": 32},
+            GRAPH_LAYOUT_HEIGHT: {"x": 480, "y": 20, "w": 210, "h": 32},
+        },
     },
     {
         "id": "viz_label_plane1",
         "text": "Scale Across Plane-2",
-        "position": {"x": 520, "y": 420, "w": 210, "h": 32},
+        "positions": {
+            GRAPH_FULL_HEIGHT:   {"x": 520, "y": 420, "w": 210, "h": 32},
+            GRAPH_LAYOUT_HEIGHT: {"x": 540, "y": 440, "w": 210, "h": 32},
+        },
     },
 ]
+
+
+def _graph_fit(height):
+    """Where the network graph lands its node bbox inside a GRAPH_WIDTH block.
+
+    The viz fits the drawing to the block preserving aspect ratio, so there is
+    a crossover: below roughly 525px it is height-limited (fills the height,
+    letterboxed left and right) and above it is width-limited. Returns
+    (scale, origin_x, origin_y) for the node coordinate space.
+    """
+    xs = [p["x"] for p in NODE_POSITIONS.values()]
+    ys = [p["y"] for p in NODE_POSITIONS.values()]
+    bbox_w = max(xs) - min(xs)
+    bbox_h = max(ys) - min(ys)
+    scale = min((GRAPH_WIDTH - 2 * GRAPH_HORIZONTAL_PADDING) / bbox_w,
+                (height - 2 * GRAPH_VERTICAL_PADDING) / bbox_h)
+    return scale, (GRAPH_WIDTH - bbox_w * scale) / 2, (height - bbox_h * scale) / 2
+
+
+def _rescale_label(pos, from_height, to_height):
+    """Move a label tuned at one graph height to another, about its center.
+
+    Only trustworthy between heights on the same side of the _graph_fit()
+    crossover. Across it the drawing switches which axis constrains it and the
+    labels need re-tuning by eye — pin them in LABEL_OVERLAYS instead.
+    """
+    scale_from, ox_from, oy_from = _graph_fit(from_height)
+    scale_to, ox_to, oy_to = _graph_fit(to_height)
+    k = scale_to / scale_from
+    cx = ox_to + (pos["x"] + pos["w"] / 2 - ox_from) * k
+    cy = oy_to + (pos["y"] + pos["h"] / 2 - oy_from) * k
+    return {"x": round(cx - pos["w"] / 2), "y": round(cy - pos["h"] / 2),
+            "w": pos["w"], "h": pos["h"]}
+
+
+def _label_position(spec, graph_height):
+    """Overlay position for a graph height, tuned if known else derived."""
+    positions = spec["positions"]
+    if graph_height in positions:
+        return positions[graph_height]
+    nearest = min(positions, key=lambda h: abs(h - graph_height))
+    return _rescale_label(positions[nearest], nearest, graph_height)
 
 
 def _text_overlay_viz(spec):
@@ -942,13 +1097,13 @@ def _topology_graph_viz(viz_id, primary_ds_id, link_matches, graph_title):
             "nodeColorValues": "> primary | seriesByName('nodeRole')",
             "nodeColors": "> nodeColorValues | matchValue(nodeColorsEditorConfig)",
             "nodeDragPositions": NODE_POSITIONS,
-            "nodeHorizontalPadding": 40,
+            "nodeHorizontalPadding": GRAPH_HORIZONTAL_PADDING,
             "nodeIconColors": "> primary | seriesByName('nodeIconColors')",
             "nodeIcons": "> primary | seriesByName('nodeIcons')",
             "nodeSize": "> primary | seriesByName('nodeSize')",
             "nodeTextFontSize": 12,
             "nodeTexts": "> primary | seriesByName('nodeTexts')",
-            "nodeVerticalPadding": 20,
+            "nodeVerticalPadding": GRAPH_VERTICAL_PADDING,
             "showDirection": "none",
             "showZoomControls": True,
             "tooltipHeaderField": "> primary | seriesByName('source')",
@@ -961,27 +1116,31 @@ def _topology_graph_viz(viz_id, primary_ds_id, link_matches, graph_title):
     return viz
 
 
-def _graph_layout_structure(graph_viz_id, include_traffic_panel=False):
+def _graph_layout_structure(graph_viz_id, include_traffic_panel=False,
+                            graph_height=None, chart_height=None):
+    if graph_height is None:
+        graph_height = GRAPH_LAYOUT_HEIGHT if include_traffic_panel else GRAPH_FULL_HEIGHT
+    if chart_height is None:
+        chart_height = TRAFFIC_CHART_HEIGHT
     structure = [
         {
             "item": graph_viz_id,
-            "position": {"h": GRAPH_LAYOUT_HEIGHT if include_traffic_panel else 700,
-                         "w": 1200, "x": 0, "y": 0},
+            "position": {"h": graph_height, "w": GRAPH_WIDTH, "x": 0, "y": 0},
             "type": "block",
         },
     ]
     for spec in LABEL_OVERLAYS:
-        pos = spec["position"]
+        pos = _label_position(spec, graph_height)
         structure.append({
             "item": spec["id"],
             "position": {"h": pos["h"], "w": pos["w"], "x": pos["x"], "y": pos["y"]},
             "type": "block",
         })
     if include_traffic_panel:
-        chart_y = _traffic_chart_layout_y()
+        chart_y = graph_height + GRAPH_CHART_GAP
         structure.append({
             "item": TRAFFIC_CHART_VIZ_ID,
-            "position": {"h": TRAFFIC_CHART_HEIGHT, "w": 1200, "x": 0, "y": chart_y},
+            "position": {"h": chart_height, "w": GRAPH_WIDTH, "x": 0, "y": chart_y},
             "type": "block",
         })
     return structure
@@ -1046,7 +1205,12 @@ def emit_dashboard(spl, rows, title="Scale Across Topology", link_color_matches=
 
 
 def emit_demo_dashboard(base_rows, title="Scale Across Topology (Demo)"):
-    """One dashboard JSON with idle / training / inference tabs."""
+    """Click-through demo: topology -> SRv6-TE steering -> live traffic.
+
+    Each tab gets its own graph viz and data source so the three states can be
+    screenshotted without touching anything. Tabs 2 and 3 render an identical
+    graph; only the traffic panel is added.
+    """
     import json
 
     visualizations = {}
@@ -1058,12 +1222,13 @@ def emit_demo_dashboard(base_rows, title="Scale Across Topology (Demo)"):
     tab_items = []
 
     for state in DEMO_STATES:
+        with_traffic = state == DEMO_TRAFFIC_STATE
         viz_id = f"viz_topology_{state}"
         ds_id = f"ds_topology_{state}"
         layout_id = f"layout_{state}"
-        state_rows = apply_demo_colors([dict(r) for r in base_rows], state)
+        state_rows = demo_rows(base_rows, state)
         spl = emit_spl(state_rows).strip()
-        link_matches = build_link_color_matches_from_map(demo_link_color_map(state))
+        link_matches = build_link_color_matches_from_map(demo_link_color_map(state, base_rows))
         visualizations[viz_id] = _topology_graph_viz(
             viz_id, ds_id, link_matches, DEMO_TAB_LABELS[state]
         )
@@ -1073,17 +1238,30 @@ def emit_demo_dashboard(base_rows, title="Scale Across Topology (Demo)"):
             "type": "ds.search",
         }
         layout_definitions[layout_id] = {
-            "structure": _graph_layout_structure(viz_id),
+            "structure": _graph_layout_structure(
+                viz_id,
+                include_traffic_panel=with_traffic,
+                graph_height=DEMO_TRAFFIC_GRAPH_HEIGHT if with_traffic else None,
+                chart_height=DEMO_TRAFFIC_CHART_HEIGHT if with_traffic else None,
+            ),
             "type": "absolute",
         }
         tab_items.append({"label": DEMO_TAB_LABELS[state], "layoutId": layout_id})
 
+    # The traffic panel is placed on the last tab's layout only, but its viz,
+    # data source and $router$ default are dashboard-scoped.
+    visualizations[TRAFFIC_CHART_VIZ_ID] = _link_traffic_chart_viz()
+    data_sources[TRAFFIC_DS_ID] = _link_traffic_data_source()
+
     dash = {
         "title": title,
-        "description": "Demo dashboard: tab through idle → training → inference link colors. "
+        "description": "Click-through demo: topology → SRv6-TE steering → live traffic. "
                        "Import via Dashboard Studio → Edit → Source code.",
-        "inputs": {},
+        # ds_link_traffic reads $global_time.*$, so this input must exist even
+        # though only the third tab uses it.
+        "inputs": {GLOBAL_TIME_INPUT_ID: dict(GLOBAL_TIME_INPUT)},
         "defaults": {
+            "tokens": {"default": link_traffic_token_defaults(base_rows)},
             "dataSources": {
                 "ds.search": {
                     "options": {
@@ -1095,6 +1273,7 @@ def emit_demo_dashboard(base_rows, title="Scale Across Topology (Demo)"):
         "visualizations": visualizations,
         "dataSources": data_sources,
         "layout": {
+            "globalInputs": [GLOBAL_TIME_INPUT_ID],
             "layoutDefinitions": layout_definitions,
             "tabs": {"items": tab_items},
         },
@@ -1117,9 +1296,11 @@ def main():
     ap.add_argument("--dashboard", metavar="FILE",
                     help="write Dashboard Studio JSON (use --patch-dashboard to merge into existing)")
     ap.add_argument("--demo-dashboard", metavar="FILE",
-                    help="write one 3-tab demo dashboard (idle → training → inference)")
+                    help="write one 3-tab click-through demo dashboard "
+                         "(topology → SRv6-TE steering → live traffic)")
     ap.add_argument("--demo-state", choices=DEMO_STATES,
-                    help="apply demo link colors to SPL/dashboard output (idle|training|inference)")
+                    help="apply one demo state's link colors to SPL/dashboard "
+                         "output (%s)" % "|".join(DEMO_STATES))
     ap.add_argument("--patch-dashboard", metavar="FILE",
                     help="update query/colors/positions in existing dashboard JSON in place")
     args = ap.parse_args()
@@ -1130,8 +1311,11 @@ def main():
     edges = build_edges(links, roles, collapse=not expand_links)
     rows = build_rows(node_names, edges, roles, short_labels=args.short_labels)
 
+    # Keep the unfiltered rows: the color map is derived from the full edge
+    # list, not from whatever survived filtering.
+    demo_base_rows = rows
     if args.demo_state:
-        apply_demo_colors(rows, args.demo_state)
+        rows = demo_rows(rows, args.demo_state)
 
     spl = emit_spl(rows)
 
@@ -1148,7 +1332,8 @@ def main():
     if args.dashboard:
         link_matches = None
         if args.demo_state:
-            link_matches = build_link_color_matches_from_map(demo_link_color_map(args.demo_state))
+            link_matches = build_link_color_matches_from_map(
+                demo_link_color_map(args.demo_state, demo_base_rows))
         with open(args.dashboard, "w") as fh:
             fh.write(emit_dashboard(spl, rows, link_color_matches=link_matches))
         print(f"wrote {args.dashboard}")

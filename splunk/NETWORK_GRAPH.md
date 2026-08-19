@@ -210,6 +210,116 @@ The trailing index is `plane * 2 + pair`, derived from the `ROUTERS` table in
 Edit colors in the dashboard JSON under `linkColorsEditorConfig`, or set defaults
 in `HOST_LINK_COLOR_DEFAULTS` in `topo_to_spl.py`.
 
+## Click-through demo dashboard
+
+`splunk/topology_network_graph.demo.json` is a separate, self-contained
+dashboard with three tabs meant to be screenshotted in order. Regenerate with:
+
+```bash
+python3 splunk/topo_to_spl.py --topo topology.clab.yaml \
+  --demo-dashboard splunk/topology_network_graph.demo.json
+```
+
+| Tab | Links | Traffic panel |
+|-----|-------|---------------|
+| 1 — Topology | all 24, neutral gray `#bdbdbc` | no |
+| 2 — SRv6-TE steering | 20, colored by traffic class | no |
+| 3 — SRv6-TE + live traffic | identical to tab 2 | yes |
+
+On tab 2 the link colors match the **host node** they serve, so the eye can
+follow host → access link → WAN bundle without a legend:
+
+| | Color | Links |
+|---|---|---|
+| Training | `#a873dd` (matches `*-trn` nodes) | 8 access links + 6 of 8 WAN bundles |
+| Inference | `#7dcff2` (matches `*-inf` nodes) | 4 access links + 2 of 8 WAN bundles |
+
+The WAN is dual-plane with four collapsed router-to-router edges per plane,
+each edge representing a 4×800G ECMP bundle drawn as a single line. Tabs 2 and
+3 share one color map by construction, so the graph cannot drift between the
+two screenshots.
+
+### Which bundles carry inference
+
+`DEMO_INFERENCE_BUNDLES` names them by **router pair**, not by link index, so
+the steered path reads straight off the table:
+
+```python
+DEMO_INFERENCE_BUNDLES = (("r03", "r07"), ("r04", "r08"))
+```
+
+Both sit in Plane-2, giving two disjoint inference paths — `dc01-inf → r03 →
+r07 → dc02-inf` and `dc01-inf → r04 → r08 → dc02-inf`. Every bundle not listed
+carries training, so the 75/25 split (2 of 8) falls out of the table rather
+than being configured separately. `FABRIC_ODN_TRAINING_BUNDLES` is no longer
+involved on the demo path; it still drives the *main* dashboard's index-based
+fallback in `link_color_for_role()`.
+
+A host access link takes its class color only if the router it lands on
+actually terminates a bundle of that class, so an access link can never imply a
+steered path that does not exist. Every router carries at least one training
+bundle, so all eight training access links stay colored — that falls out of the
+same rule rather than being a special case.
+
+### Unsteered links are dropped, not grayed
+
+On tabs 2 and 3 a link in neither class is **removed from the graph**, not
+drawn neutral. Alongside colored links a gray one reads as "this path is down"
+rather than "this path is not part of the story". That removes exactly four
+links: each inference host dual-homes onto four routers but only two of them
+carry an inference bundle, so `dc01-inf → r01`, `dc01-inf → r02`,
+`dc02-inf → r05` and `dc02-inf → r06` disappear. Tab 1 keeps all 24, since it
+is the fabric as built.
+
+Node rows survive filtering regardless, so dropping a link never removes the
+node at either end. All of this is derived from the edge list at generation
+time, so re-pointing a bundle in `topology.clab.yaml` or editing
+`DEMO_INFERENCE_BUNDLES` keeps both the colors and the dropped set honest.
+
+Colors come from `DEMO_BASE_LINK_COLOR` / `DEMO_TRAINING_COLOR` /
+`DEMO_INFERENCE_COLOR` in `topo_to_spl.py`; the latter two are read from
+`ROLE_STYLE` so they track the host node colors automatically.
+
+Note the time range picker is a global input and therefore shows on all three
+tabs, even though only tab 3 needs it — `ds_link_traffic` reads
+`$global_time.*$` and Dashboard Studio will not render the panel without it.
+
+### Tab heights
+
+Tab 3 budgets 680px so the graph and the whole traffic panel fit without
+scrolling: a 420px graph (`DEMO_TRAFFIC_GRAPH_HEIGHT`), a 20px gap
+(`GRAPH_CHART_GAP`), and a 240px panel (`DEMO_TRAFFIC_CHART_HEIGHT`). These
+constants are demo-only; the main dashboard keeps its 480 + 20 + 280 layout.
+
+### Text overlay positions
+
+The "Scale Across Plane-N" and "DC-1/DC-2" labels are separate blocks in the
+absolute layout, so they do not follow the graph when its height changes.
+Each entry in `LABEL_OVERLAYS` therefore carries a `positions` map keyed by
+graph height, tuned by eye:
+
+- `GRAPH_FULL_HEIGHT` (700) — graph alone, tabs 1 and 2
+- `GRAPH_LAYOUT_HEIGHT` (480) — graph above the traffic panel, main dashboard
+
+Heights with no entry are derived from the nearest one by `_rescale_label()`,
+which is how tab 3's 420px positions are produced. That derivation is only
+valid within one fit regime. `_graph_fit()` shows why: the viz scales its
+drawing to the block preserving aspect ratio, and with a 710×310 node bounding
+box the crossover sits near 525px. Below it the graph is height-limited (fills
+the height, letterboxed left and right, so shrinking the height narrows it
+too); above it is width-limited. 420 and 480 are both height-limited, so
+scaling between them holds; scaling from either to 700 does not, which is why
+700 is pinned explicitly.
+
+To nudge a derived height, add an explicit entry for it under `positions` —
+that pins it and skips the derivation. Note `GRAPH_HORIZONTAL_PADDING` /
+`GRAPH_VERTICAL_PADDING` feed both `_graph_fit()` and the viz's
+`nodeHorizontal/VerticalPadding` options, so they cannot drift apart.
+
+Adjust values in `topo_to_spl.py` and regenerate; editing the JSON directly is
+lost on the next run. `--patch-dashboard` deliberately leaves label positions
+alone, so hand-tuning the main dashboard in Splunk survives.
+
 ## Traffic panel: which interfaces appear
 
 Clicking a node charts `out_octets` for that router, one series per interface.

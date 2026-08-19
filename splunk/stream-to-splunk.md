@@ -33,7 +33,7 @@ Lab config in repo: `config/telegraf/telegraf.conf`, `config/r01.cfg`
 
 | Component | Lab value |
 |-----------|-----------|
-| Telegraf listen | `198.18.201.39:57400` |
+| Telegraf listen | `198.18.201.41:57400` |
 | Splunk HEC | `https://198.18.201.42:8088/services/collector` |
 | Metrics index | `mdt_metrics` |
 | MDT sample interval | 30s (`sample-interval 30000`) |
@@ -83,6 +83,61 @@ sudo systemctl restart telegraf
 ss -lntp | grep 57400
 ```
 
+### Multiple HEC destinations
+
+`[[outputs.http]]` is a TOML array of tables, so the config can hold several
+outputs. Telegraf fans every metric out to all of them and buffers each
+separately, so an unreachable endpoint does not stall the others. The config
+currently ships two: the local lab Splunk and a dCloud-hosted Splunk.
+
+Neither output names an index. With `splunkmetric_hec_routing = true` the
+destination comes from the **HEC token's default index** on the Splunk side,
+which must be of type **Metrics** — see Step 1. Two tokens pointing at
+differently-named indexes is fine as long as both are metrics indexes and the
+dashboard SPL matches the one you query.
+
+The remote token is read from the environment so it stays out of git. Telegraf's
+systemd unit already sources `/etc/default/telegraf` (or
+`/etc/sysconfig/telegraf` on RHEL):
+
+```bash
+echo 'SPLUNK_CLOUD_HEC_TOKEN=<token>' | sudo tee -a /etc/default/telegraf
+sudo chmod 600 /etc/default/telegraf
+sudo systemctl restart telegraf
+```
+
+If the variable is unset, Telegraf sends an empty token and the remote returns
+`403 {"text":"Invalid token"}` while the local output keeps working — an empty
+token and a wrong one look identical in the log. Confirm what the process
+actually got before assuming the token is bad:
+
+```bash
+sudo tr '\0' '\n' < /proc/$(pgrep -x telegraf)/environ | grep SPLUNK_CLOUD
+```
+
+### TLS to a self-signed Splunk
+
+Both outputs currently set `insecure_skip_verify = true`. Splunk's default
+`SplunkServerDefaultCert` is self-signed and carries no IP SANs, so pointing an
+output at a bare IP fails with `cannot validate certificate ... doesn't contain
+any IP SANs` no matter what is in the trust store. Both destinations are lab
+addresses in RFC 2544 space, not the public internet.
+
+If either moves to a real Splunk Cloud stack, drop the flag — those present a
+valid CA cert, and skipping verification on a public endpoint would expose the
+HEC token to anyone able to intercept the connection. To keep verification
+against a self-signed instance, copy its `$SPLUNK_HOME/etc/auth/cacert.pem` to
+the Telegraf node and set `tls_ca` plus `tls_server_name =
+"SplunkServerDefaultCert"` so the name check targets the cert's CN rather than
+the IP.
+
+Pre-flight the endpoint before restarting — 200 confirms reachability and TLS:
+
+```bash
+curl -sk -o /dev/null -w '%{http_code}\n' \
+  https://198.19.224.190:8088/services/collector/health
+```
+
 ---
 
 ## Step 3 — IOS-XR MDT (SAR routers)
@@ -92,16 +147,13 @@ Example from `config/r01.cfg`:
 ```iosxr
 telemetry model-driven
  destination-group DGroup1
-  vrf Mgmt-intf
-  address-family ipv4 198.18.201.39 port 57400
+  address-family ipv4 198.18.201.41 port 57400
    encoding self-describing-gpb
    protocol grpc no-tls
   !
  !
  sensor-group interfaces
-  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-summary
-  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/data-rate
-  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+  sensor-path openconfig-interfaces:interfaces/interface
  !
  subscription interfaces
   sensor-group-id interfaces strict-timer
@@ -111,6 +163,13 @@ telemetry model-driven
  !
 !
 ```
+
+The `openconfig-interfaces` sensor path is what the dashboard depends on — the
+traffic panel reads `out_octets` from it. Swapping in the equivalent native
+`Cisco-IOS-XR-infra-statsd-oper` paths changes the metric names and silently
+empties the panel. The route reflectors carry a different sensor set (platform,
+health, routing) and no interface counters, which is why the graph is generated
+with `exclude_rr=True`.
 
 Verify on box:
 
